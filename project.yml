@@ -1,0 +1,65 @@
+name: SVTMonitor
+options:
+  bundleIdPrefix: com.sydneygahunia
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  # Xcode 15.4 cannot open the newest project format XcodeGen defaults to,
+  # so pin the objectVersion / compatibility version it understands.
+  objectVersion: 56
+  xcodeVersion: "15.4"
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.10"
+    DEVELOPMENT_LANGUAGE: en
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    GENERATE_INFOPLIST_FILE: NO
+
+targets:
+  SVTMonitor:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: SVTMonitor
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sydneygahunia.svtmonitor
+        INFOPLIST_FILE: SVTMonitor/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: SVTMonitor/Resources/SVTMonitor.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1"
+        SUPPORTED_PLATFORMS: "iphonesimulator iphoneos"
+        SWIFT_EMIT_LOC_STRINGS: YES
+        ENABLE_PREVIEWS: YES
+        DEVELOPMENT_ASSET_PATHS: ""
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+
+  SVTMonitorTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: SVTMonitorTests
+    dependencies:
+      - target: SVTMonitor
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sydneygahunia.svtmonitor.tests
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  SVTMonitor:
+    build:
+      targets:
+        SVTMonitor: all
+        SVTMonitorTests: [test]
+    test:
+      targets:
+        - SVTMonitorTests
+      gatherCoverageData: true

@@ -1,0 +1,580 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		06FEE5B7496FBB98B1639482 /* SimulatedHeartRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88157BEDF5600899E5C51733 /* SimulatedHeartRateProvider.swift */; };
+		261326EB19A2E807B6E16879 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C141392FAE0AE38EDA6A9DEF /* OnboardingView.swift */; };
+		36AD933C411953D84E24A087 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2328C1E9021EB1E46D93327 /* SettingsView.swift */; };
+		3A07A9EA56618D2380E5CDEA /* EpisodeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AA7EFB9A5E587A94C6DDCC /* EpisodeDetector.swift */; };
+		416734B5D8DF8AE1713ED82C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D31F39E00F721F56F9889A7A /* Assets.xcassets */; };
+		459DE400EE64FE92B6267D07 /* EpisodeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DF062F182F6764A21A268D4 /* EpisodeDetailView.swift */; };
+		48815BFF859738C6DD045CE7 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B8D84D2E6451C3023914F6 /* Theme.swift */; };
+		4D73F11D4FA8DB668AF04EFC /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6867937B4A468108F9CD694D /* AppSettings.swift */; };
+		5E6964C5F818FD4FFF076B0F /* EpisodeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29CFCDCAD7219729738D0DE6 /* EpisodeDetectorTests.swift */; };
+		642A04588E36DE7F3D280885 /* EpisodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A245E1F999622A0F2267AD /* EpisodeListView.swift */; };
+		673C396188FD3423FC81B601 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB955305404324BEFEC15F7 /* SeedData.swift */; };
+		6C0620A766D5A038BCD9F61B /* MonitorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D26AE6A0A7D4D81F008222C /* MonitorStatus.swift */; };
+		7E05394187BFADCD52E8A010 /* TrendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115A9F151C52B6E51D70A921 /* TrendsView.swift */; };
+		7E0BB488FDF3898D8FB20326 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57BD30BC8BA4419FEA671510 /* Components.swift */; };
+		801B0532E99E0D9D1C35C6A7 /* PreviewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F370B770294B4755170B20A /* PreviewData.swift */; };
+		8CC36AF6A1F247365504D58B /* HeartRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978363031351A648B8AD93A0 /* HeartRateProvider.swift */; };
+		997612AA3E4A6BE92F877920 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF57EFBEA35A720D6992B86 /* NotificationManager.swift */; };
+		A6E091916153DFB7D096DB3D /* SVTMonitorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4723BD597A563BE85AF92BE7 /* SVTMonitorApp.swift */; };
+		BA01502B0373AB94C799EAF8 /* HeartRateSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7791369FF5702F3B3FEC956 /* HeartRateSample.swift */; };
+		C63A4413BC91CEDA12957937 /* SVTEpisode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86BA4A52DADA169D0D310F15 /* SVTEpisode.swift */; };
+		D1456D93FDE4AD14F5530EB5 /* HealthKitHeartRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B08AFED043D36F1025D9DD0 /* HealthKitHeartRateProvider.swift */; };
+		D6448A4984325F6117537FC2 /* PulsingHeartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D70A137731E142C2824A5A49 /* PulsingHeartView.swift */; };
+		E31DBF4E2D33F6F139CF37D8 /* MonitorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7337E5EE20136BC782A6D3 /* MonitorViewModel.swift */; };
+		E7E24F27569137766C847317 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7034731C8B3B146E0BDDF345 /* RootView.swift */; };
+		E92B6225556BEC7EC3E4212A /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF72E972B300F9F98363B82D /* DashboardView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		16EBCB6013FE5B1D7AEFC2C0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BE9B408A9BBAA03014FEA299 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C113C0668B171B6C1EB37830;
+			remoteInfo = SVTMonitor;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		06B8D84D2E6451C3023914F6 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		115A9F151C52B6E51D70A921 /* TrendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrendsView.swift; sourceTree = "<group>"; };
+		29CFCDCAD7219729738D0DE6 /* EpisodeDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeDetectorTests.swift; sourceTree = "<group>"; };
+		2DF57EFBEA35A720D6992B86 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		3DF062F182F6764A21A268D4 /* EpisodeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeDetailView.swift; sourceTree = "<group>"; };
+		4723BD597A563BE85AF92BE7 /* SVTMonitorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVTMonitorApp.swift; sourceTree = "<group>"; };
+		57BD30BC8BA4419FEA671510 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		64F5A037E77BFECA3A75A6E7 /* SVTMonitor.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SVTMonitor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6867937B4A468108F9CD694D /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		6D26AE6A0A7D4D81F008222C /* MonitorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitorStatus.swift; sourceTree = "<group>"; };
+		6E6F3545B0E964B51272F339 /* SVTMonitorTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SVTMonitorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7034731C8B3B146E0BDDF345 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		82A245E1F999622A0F2267AD /* EpisodeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeListView.swift; sourceTree = "<group>"; };
+		86BA4A52DADA169D0D310F15 /* SVTEpisode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVTEpisode.swift; sourceTree = "<group>"; };
+		88157BEDF5600899E5C51733 /* SimulatedHeartRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatedHeartRateProvider.swift; sourceTree = "<group>"; };
+		8B08AFED043D36F1025D9DD0 /* HealthKitHeartRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitHeartRateProvider.swift; sourceTree = "<group>"; };
+		8D7337E5EE20136BC782A6D3 /* MonitorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonitorViewModel.swift; sourceTree = "<group>"; };
+		978363031351A648B8AD93A0 /* HeartRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateProvider.swift; sourceTree = "<group>"; };
+		9F370B770294B4755170B20A /* PreviewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewData.swift; sourceTree = "<group>"; };
+		AF72E972B300F9F98363B82D /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		B3AA7EFB9A5E587A94C6DDCC /* EpisodeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeDetector.swift; sourceTree = "<group>"; };
+		C141392FAE0AE38EDA6A9DEF /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		C2328C1E9021EB1E46D93327 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C7791369FF5702F3B3FEC956 /* HeartRateSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateSample.swift; sourceTree = "<group>"; };
+		CAB955305404324BEFEC15F7 /* SeedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedData.swift; sourceTree = "<group>"; };
+		CBE1E0BB3694B26297ADC25C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D31F39E00F721F56F9889A7A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D70A137731E142C2824A5A49 /* PulsingHeartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulsingHeartView.swift; sourceTree = "<group>"; };
+		EDDB9CB8DB3998593365775D /* SVTMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SVTMonitor.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		137E48DE152F0E537FB7B4E7 /* SVTMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				5415DB19D694A790893C5E68 /* App */,
+				9CD7B124B0456844FCAA17A9 /* Models */,
+				4F1F327BBAE5268D1302F506 /* Resources */,
+				7479542B415C2BB0316BD209 /* Services */,
+				AAB24EB372C7FF2F65A23B23 /* Theme */,
+				5398665D39DCCF5806D3D7DE /* ViewModels */,
+				C8C04BF93240C609F4FA1300 /* Views */,
+			);
+			path = SVTMonitor;
+			sourceTree = "<group>";
+		};
+		2BAA5C7AC204320DD73D3512 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				64F5A037E77BFECA3A75A6E7 /* SVTMonitor.app */,
+				6E6F3545B0E964B51272F339 /* SVTMonitorTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4F1F327BBAE5268D1302F506 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D31F39E00F721F56F9889A7A /* Assets.xcassets */,
+				CBE1E0BB3694B26297ADC25C /* Info.plist */,
+				EDDB9CB8DB3998593365775D /* SVTMonitor.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5398665D39DCCF5806D3D7DE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				8D7337E5EE20136BC782A6D3 /* MonitorViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		5415DB19D694A790893C5E68 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				4723BD597A563BE85AF92BE7 /* SVTMonitorApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		597CE6B337AC31FB3887BF09 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				57BD30BC8BA4419FEA671510 /* Components.swift */,
+				9F370B770294B4755170B20A /* PreviewData.swift */,
+				D70A137731E142C2824A5A49 /* PulsingHeartView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		7479542B415C2BB0316BD209 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				B3AA7EFB9A5E587A94C6DDCC /* EpisodeDetector.swift */,
+				8B08AFED043D36F1025D9DD0 /* HealthKitHeartRateProvider.swift */,
+				978363031351A648B8AD93A0 /* HeartRateProvider.swift */,
+				2DF57EFBEA35A720D6992B86 /* NotificationManager.swift */,
+				CAB955305404324BEFEC15F7 /* SeedData.swift */,
+				88157BEDF5600899E5C51733 /* SimulatedHeartRateProvider.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		9CD7B124B0456844FCAA17A9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6867937B4A468108F9CD694D /* AppSettings.swift */,
+				C7791369FF5702F3B3FEC956 /* HeartRateSample.swift */,
+				6D26AE6A0A7D4D81F008222C /* MonitorStatus.swift */,
+				86BA4A52DADA169D0D310F15 /* SVTEpisode.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AAB24EB372C7FF2F65A23B23 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				06B8D84D2E6451C3023914F6 /* Theme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		C8C04BF93240C609F4FA1300 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				597CE6B337AC31FB3887BF09 /* Components */,
+				AF72E972B300F9F98363B82D /* DashboardView.swift */,
+				3DF062F182F6764A21A268D4 /* EpisodeDetailView.swift */,
+				82A245E1F999622A0F2267AD /* EpisodeListView.swift */,
+				C141392FAE0AE38EDA6A9DEF /* OnboardingView.swift */,
+				7034731C8B3B146E0BDDF345 /* RootView.swift */,
+				C2328C1E9021EB1E46D93327 /* SettingsView.swift */,
+				115A9F151C52B6E51D70A921 /* TrendsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CBF9EB29A343866C4FD5CE6D /* SVTMonitorTests */ = {
+			isa = PBXGroup;
+			children = (
+				29CFCDCAD7219729738D0DE6 /* EpisodeDetectorTests.swift */,
+			);
+			path = SVTMonitorTests;
+			sourceTree = "<group>";
+		};
+		E577316E1831D4909AE7C9AA = {
+			isa = PBXGroup;
+			children = (
+				137E48DE152F0E537FB7B4E7 /* SVTMonitor */,
+				CBF9EB29A343866C4FD5CE6D /* SVTMonitorTests */,
+				2BAA5C7AC204320DD73D3512 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C113C0668B171B6C1EB37830 /* SVTMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8FC4087B537C500C92F22F69 /* Build configuration list for PBXNativeTarget "SVTMonitor" */;
+			buildPhases = (
+				4F7FAF50384386965D792A13 /* Sources */,
+				B5DE711368BFE2E2BAFD50E6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SVTMonitor;
+			packageProductDependencies = (
+			);
+			productName = SVTMonitor;
+			productReference = 64F5A037E77BFECA3A75A6E7 /* SVTMonitor.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DF756B5F0EC7CAD353A0D897 /* SVTMonitorTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 919405D111C1C4D404E8B27F /* Build configuration list for PBXNativeTarget "SVTMonitorTests" */;
+			buildPhases = (
+				DE96187AB543F7859DA9C13D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9AA571FC86E1EC27171CD1D5 /* PBXTargetDependency */,
+			);
+			name = SVTMonitorTests;
+			packageProductDependencies = (
+			);
+			productName = SVTMonitorTests;
+			productReference = 6E6F3545B0E964B51272F339 /* SVTMonitorTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BE9B408A9BBAA03014FEA299 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 7D6B58093AEA2A0E4F713675 /* Build configuration list for PBXProject "SVTMonitor" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E577316E1831D4909AE7C9AA;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 2BAA5C7AC204320DD73D3512 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C113C0668B171B6C1EB37830 /* SVTMonitor */,
+				DF756B5F0EC7CAD353A0D897 /* SVTMonitorTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B5DE711368BFE2E2BAFD50E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				416734B5D8DF8AE1713ED82C /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4F7FAF50384386965D792A13 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D73F11D4FA8DB668AF04EFC /* AppSettings.swift in Sources */,
+				7E0BB488FDF3898D8FB20326 /* Components.swift in Sources */,
+				E92B6225556BEC7EC3E4212A /* DashboardView.swift in Sources */,
+				459DE400EE64FE92B6267D07 /* EpisodeDetailView.swift in Sources */,
+				3A07A9EA56618D2380E5CDEA /* EpisodeDetector.swift in Sources */,
+				642A04588E36DE7F3D280885 /* EpisodeListView.swift in Sources */,
+				D1456D93FDE4AD14F5530EB5 /* HealthKitHeartRateProvider.swift in Sources */,
+				8CC36AF6A1F247365504D58B /* HeartRateProvider.swift in Sources */,
+				BA01502B0373AB94C799EAF8 /* HeartRateSample.swift in Sources */,
+				6C0620A766D5A038BCD9F61B /* MonitorStatus.swift in Sources */,
+				E31DBF4E2D33F6F139CF37D8 /* MonitorViewModel.swift in Sources */,
+				997612AA3E4A6BE92F877920 /* NotificationManager.swift in Sources */,
+				261326EB19A2E807B6E16879 /* OnboardingView.swift in Sources */,
+				801B0532E99E0D9D1C35C6A7 /* PreviewData.swift in Sources */,
+				D6448A4984325F6117537FC2 /* PulsingHeartView.swift in Sources */,
+				E7E24F27569137766C847317 /* RootView.swift in Sources */,
+				C63A4413BC91CEDA12957937 /* SVTEpisode.swift in Sources */,
+				A6E091916153DFB7D096DB3D /* SVTMonitorApp.swift in Sources */,
+				673C396188FD3423FC81B601 /* SeedData.swift in Sources */,
+				36AD933C411953D84E24A087 /* SettingsView.swift in Sources */,
+				06FEE5B7496FBB98B1639482 /* SimulatedHeartRateProvider.swift in Sources */,
+				48815BFF859738C6DD045CE7 /* Theme.swift in Sources */,
+				7E05394187BFADCD52E8A010 /* TrendsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DE96187AB543F7859DA9C13D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E6964C5F818FD4FFF076B0F /* EpisodeDetectorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9AA571FC86E1EC27171CD1D5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C113C0668B171B6C1EB37830 /* SVTMonitor */;
+			targetProxy = 16EBCB6013FE5B1D7AEFC2C0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		085E0E936D25785372F4CD7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_LANGUAGE = en;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Release;
+		};
+		292F341D8E6263C3568B8910 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_LANGUAGE = en;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Debug;
+		};
+		68FCB019BAA84C4DF170D8FA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SVTMonitor/Resources/SVTMonitor.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = SVTMonitor/Resources/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sydneygahunia.svtmonitor;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		6BC7C535A1AA31DAA077B624 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sydneygahunia.svtmonitor.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SVTMonitor.app/SVTMonitor";
+			};
+			name = Release;
+		};
+		CDB78965C533782A63DD3222 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SVTMonitor/Resources/SVTMonitor.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = SVTMonitor/Resources/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sydneygahunia.svtmonitor;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		F4EFCD99208E6ED086625783 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sydneygahunia.svtmonitor.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SVTMonitor.app/SVTMonitor";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7D6B58093AEA2A0E4F713675 /* Build configuration list for PBXProject "SVTMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				292F341D8E6263C3568B8910 /* Debug */,
+				085E0E936D25785372F4CD7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8FC4087B537C500C92F22F69 /* Build configuration list for PBXNativeTarget "SVTMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68FCB019BAA84C4DF170D8FA /* Debug */,
+				CDB78965C533782A63DD3222 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		919405D111C1C4D404E8B27F /* Build configuration list for PBXNativeTarget "SVTMonitorTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F4EFCD99208E6ED086625783 /* Debug */,
+				6BC7C535A1AA31DAA077B624 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = BE9B408A9BBAA03014FEA299 /* Project object */;
+}

@@ -1,0 +1,7 @@
+build/
+xcodegen/
+xcodegen.zip
+*.xcuserdatad/
+xcuserdata/
+DerivedData/
+.DS_Store
