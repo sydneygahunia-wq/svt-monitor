@@ -16,6 +16,14 @@ simulator).
 
 ---
 
+## Screenshots
+
+| Live Monitor | Episode Log | Onboarding |
+|:---:|:---:|:---:|
+| ![Live dashboard with beating heart and threshold sparkline](docs/dashboard.png) | ![Episode history with durations and peak BPM](docs/episodes.png) | ![Onboarding](docs/onboarding.png) |
+
+---
+
 ## What it does
 
 - **Live monitoring** — a calm dashboard with a heart that beats at your actual
