@@ -32,6 +32,17 @@
 		E31DBF4E2D33F6F139CF37D8 /* MonitorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7337E5EE20136BC782A6D3 /* MonitorViewModel.swift */; };
 		E7E24F27569137766C847317 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7034731C8B3B146E0BDDF345 /* RootView.swift */; };
 		E92B6225556BEC7EC3E4212A /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF72E972B300F9F98363B82D /* DashboardView.swift */; };
+		49BDD0739E494BA58E7B27E7 /* Symptom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E1796DEAD700BB2939A7C0 /* Symptom.swift */; };
+		2EF075AE97978648453B1A1A /* EpisodeTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B894B8C9E9A56E1D079268 /* EpisodeTrigger.swift */; };
+		3C6F6236EC3376FFAA2A6FD2 /* VagalManeuver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272890DBCEFB69754EC2C5D6 /* VagalManeuver.swift */; };
+		3098738D6684CF2A9A77DFAC /* BreathingPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21857C6B69CF04B4E19D12D8 /* BreathingPattern.swift */; };
+		C65E2802ECE68300D565617B /* EpisodeInsights.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1632FFAEB6D7AA9125193F1 /* EpisodeInsights.swift */; };
+		89F6A37CC778D2CE1064AA23 /* CalmModeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D3818EDBE56EF6B4058223 /* CalmModeView.swift */; };
+		6982DAAD7779FB52BCB12049 /* LogEpisodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E1B99F587457758C9014D2A /* LogEpisodeView.swift */; };
+		C9BC706EBFE33A2B46638E7F /* TagChips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3EAF90FC6567C8C3E48A89 /* TagChips.swift */; };
+		26CA635859FD74F215DEAEEE /* BreathingPatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28449BE9053D980838DC6254 /* BreathingPatternTests.swift */; };
+		808FB1FD59F7135CD33E1BFF /* EpisodeInsightsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A53ACA64B2B8E7235760 /* EpisodeInsightsTests.swift */; };
+		117B071A4895ED7A0D3AF859 /* SVTEpisodeTaggingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CC6C221AED31FC4BFC05F5 /* SVTEpisodeTaggingTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +85,17 @@
 		D31F39E00F721F56F9889A7A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D70A137731E142C2824A5A49 /* PulsingHeartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulsingHeartView.swift; sourceTree = "<group>"; };
 		EDDB9CB8DB3998593365775D /* SVTMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SVTMonitor.entitlements; sourceTree = "<group>"; };
+		95E1796DEAD700BB2939A7C0 /* Symptom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Symptom.swift; sourceTree = "<group>"; };
+		F0B894B8C9E9A56E1D079268 /* EpisodeTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeTrigger.swift; sourceTree = "<group>"; };
+		272890DBCEFB69754EC2C5D6 /* VagalManeuver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VagalManeuver.swift; sourceTree = "<group>"; };
+		21857C6B69CF04B4E19D12D8 /* BreathingPattern.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingPattern.swift; sourceTree = "<group>"; };
+		C1632FFAEB6D7AA9125193F1 /* EpisodeInsights.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeInsights.swift; sourceTree = "<group>"; };
+		61D3818EDBE56EF6B4058223 /* CalmModeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalmModeView.swift; sourceTree = "<group>"; };
+		8E1B99F587457758C9014D2A /* LogEpisodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEpisodeView.swift; sourceTree = "<group>"; };
+		8D3EAF90FC6567C8C3E48A89 /* TagChips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagChips.swift; sourceTree = "<group>"; };
+		28449BE9053D980838DC6254 /* BreathingPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingPatternTests.swift; sourceTree = "<group>"; };
+		A1E3A53ACA64B2B8E7235760 /* EpisodeInsightsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeInsightsTests.swift; sourceTree = "<group>"; };
+		88CC6C221AED31FC4BFC05F5 /* SVTEpisodeTaggingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVTEpisodeTaggingTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -129,6 +151,7 @@
 		597CE6B337AC31FB3887BF09 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				8D3EAF90FC6567C8C3E48A89 /* TagChips.swift */,
 				57BD30BC8BA4419FEA671510 /* Components.swift */,
 				9F370B770294B4755170B20A /* PreviewData.swift */,
 				D70A137731E142C2824A5A49 /* PulsingHeartView.swift */,
@@ -139,6 +162,8 @@
 		7479542B415C2BB0316BD209 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				21857C6B69CF04B4E19D12D8 /* BreathingPattern.swift */,
+				C1632FFAEB6D7AA9125193F1 /* EpisodeInsights.swift */,
 				B3AA7EFB9A5E587A94C6DDCC /* EpisodeDetector.swift */,
 				8B08AFED043D36F1025D9DD0 /* HealthKitHeartRateProvider.swift */,
 				978363031351A648B8AD93A0 /* HeartRateProvider.swift */,
@@ -152,6 +177,9 @@
 		9CD7B124B0456844FCAA17A9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				95E1796DEAD700BB2939A7C0 /* Symptom.swift */,
+				F0B894B8C9E9A56E1D079268 /* EpisodeTrigger.swift */,
+				272890DBCEFB69754EC2C5D6 /* VagalManeuver.swift */,
 				6867937B4A468108F9CD694D /* AppSettings.swift */,
 				C7791369FF5702F3B3FEC956 /* HeartRateSample.swift */,
 				6D26AE6A0A7D4D81F008222C /* MonitorStatus.swift */,
@@ -171,6 +199,8 @@
 		C8C04BF93240C609F4FA1300 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				61D3818EDBE56EF6B4058223 /* CalmModeView.swift */,
+				8E1B99F587457758C9014D2A /* LogEpisodeView.swift */,
 				597CE6B337AC31FB3887BF09 /* Components */,
 				AF72E972B300F9F98363B82D /* DashboardView.swift */,
 				3DF062F182F6764A21A268D4 /* EpisodeDetailView.swift */,
@@ -186,6 +216,9 @@
 		CBF9EB29A343866C4FD5CE6D /* SVTMonitorTests */ = {
 			isa = PBXGroup;
 			children = (
+				28449BE9053D980838DC6254 /* BreathingPatternTests.swift */,
+				A1E3A53ACA64B2B8E7235760 /* EpisodeInsightsTests.swift */,
+				88CC6C221AED31FC4BFC05F5 /* SVTEpisodeTaggingTests.swift */,
 				29CFCDCAD7219729738D0DE6 /* EpisodeDetectorTests.swift */,
 			);
 			path = SVTMonitorTests;
@@ -286,6 +319,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49BDD0739E494BA58E7B27E7 /* Symptom.swift in Sources */,
+				2EF075AE97978648453B1A1A /* EpisodeTrigger.swift in Sources */,
+				3C6F6236EC3376FFAA2A6FD2 /* VagalManeuver.swift in Sources */,
+				3098738D6684CF2A9A77DFAC /* BreathingPattern.swift in Sources */,
+				C65E2802ECE68300D565617B /* EpisodeInsights.swift in Sources */,
+				89F6A37CC778D2CE1064AA23 /* CalmModeView.swift in Sources */,
+				6982DAAD7779FB52BCB12049 /* LogEpisodeView.swift in Sources */,
+				C9BC706EBFE33A2B46638E7F /* TagChips.swift in Sources */,
 				4D73F11D4FA8DB668AF04EFC /* AppSettings.swift in Sources */,
 				7E0BB488FDF3898D8FB20326 /* Components.swift in Sources */,
 				E92B6225556BEC7EC3E4212A /* DashboardView.swift in Sources */,
@@ -316,6 +357,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26CA635859FD74F215DEAEEE /* BreathingPatternTests.swift in Sources */,
+				808FB1FD59F7135CD33E1BFF /* EpisodeInsightsTests.swift in Sources */,
+				117B071A4895ED7A0D3AF859 /* SVTEpisodeTaggingTests.swift in Sources */,
 				5E6964C5F818FD4FFF076B0F /* EpisodeDetectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
