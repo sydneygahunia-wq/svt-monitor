@@ -33,6 +33,9 @@ final class MonitorViewModel: ObservableObject {
     @Published private(set) var lastSampleDate: Date?
     /// True while the demo generator is mid-simulated-episode.
     @Published private(set) var isSimulatingEpisode = false
+    /// Set when Calm Mode is opened during the current episode, so the saved
+    /// episode can record that breathing was used. Reset when the episode ends.
+    @Published private(set) var usedCalmModeThisEpisode = false
 
     // MARK: Dependencies
 
@@ -108,10 +111,17 @@ final class MonitorViewModel: ObservableObject {
         status = .idle
         activePeakBPM = nil
         isSimulatingEpisode = false
+        usedCalmModeThisEpisode = false
     }
 
     func toggleMonitoring() {
         isMonitoring ? stopMonitoring() : startMonitoring()
+    }
+
+    /// Called when Calm Mode appears, so a finished episode can note that the
+    /// user reached for the breathing guide during it.
+    func noteCalmModeOpened() {
+        usedCalmModeThisEpisode = true
     }
 
     /// Demo-only: kick off a simulated SVT episode.
@@ -146,6 +156,7 @@ final class MonitorViewModel: ObservableObject {
             persist(episode)
             status = isMonitoring ? .monitoring : .idle
             activePeakBPM = nil
+            usedCalmModeThisEpisode = false
         }
     }
 
@@ -165,7 +176,8 @@ final class MonitorViewModel: ObservableObject {
             peakBPM: episode.peakBPM,
             avgBPM: episode.avgBPM,
             sampleCount: episode.sampleCount,
-            hrTrace: episode.hrTrace
+            hrTrace: episode.hrTrace,
+            usedCalmMode: usedCalmModeThisEpisode
         )
         modelContext.insert(model)
         try? modelContext.save()
