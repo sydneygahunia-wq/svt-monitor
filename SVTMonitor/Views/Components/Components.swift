@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Status capsule shown on the dashboard (MONITORING / POSSIBLE EPISODE / …).
 struct StatusPill: View {
@@ -97,4 +98,16 @@ struct SectionHeader: View {
             .foregroundStyle(Theme.inkSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
+}
+
+/// Wraps `UIActivityViewController` so a plain-text summary can be shared,
+/// printed, or saved. Used to hand an episode history to a clinician.
+struct ShareSheet: UIViewControllerRepresentable {
+    let text: String
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [text], applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }
