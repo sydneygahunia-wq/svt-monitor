@@ -12,17 +12,51 @@ enum SeedData {
         let duration: TimeInterval
         let peak: Double
         let notes: String
+        var symptoms: [Symptom] = []
+        var triggers: [EpisodeTrigger] = []
+        var severity: Int = 0
+        var manual: Bool = false
     }
 
     private static let specs: [Spec] = [
-        Spec(daysAgo: 20.4, duration: 52,  peak: 158, notes: "Came on while climbing stairs. Passed quickly."),
-        Spec(daysAgo: 18.1, duration: 134, peak: 182, notes: "Sitting at my desk. Tried slow breathing."),
-        Spec(daysAgo: 15.7, duration: 220, peak: 176, notes: ""),
-        Spec(daysAgo: 12.3, duration: 45,  peak: 163, notes: "Very brief, right after coffee."),
-        Spec(daysAgo: 9.6,  duration: 370, peak: 191, notes: "Longer one. Did a Valsalva maneuver and it stopped."),
-        Spec(daysAgo: 6.2,  duration: 88,  peak: 169, notes: ""),
-        Spec(daysAgo: 3.1,  duration: 295, peak: 198, notes: "Woke me up. Felt lightheaded."),
-        Spec(daysAgo: 1.4,  duration: 118, peak: 172, notes: "After a light jog on the treadmill."),
+        Spec(daysAgo: 20.4, duration: 52,  peak: 158,
+             notes: "Came on while climbing stairs. Passed quickly.",
+             symptoms: [.palpitations, .shortnessOfBreath],
+             triggers: [.exercise], severity: 2),
+        Spec(daysAgo: 18.1, duration: 134, peak: 182,
+             notes: "Sitting at my desk. Tried slow breathing.",
+             symptoms: [.palpitations, .anxiety],
+             triggers: [.stress, .caffeine], severity: 3),
+        Spec(daysAgo: 15.7, duration: 220, peak: 176,
+             notes: "",
+             symptoms: [.palpitations, .lightheaded],
+             triggers: [.unknown], severity: 3),
+        Spec(daysAgo: 12.3, duration: 45,  peak: 163,
+             notes: "Very brief, right after coffee.",
+             symptoms: [.palpitations],
+             triggers: [.caffeine], severity: 1),
+        Spec(daysAgo: 9.6,  duration: 370, peak: 191,
+             notes: "Longer one. Did a maneuver my cardiologist showed me and it stopped.",
+             symptoms: [.palpitations, .chestPressure, .anxiety],
+             triggers: [.stress, .poorSleep], severity: 4),
+        Spec(daysAgo: 6.2,  duration: 88,  peak: 169,
+             notes: "",
+             symptoms: [.palpitations],
+             triggers: [.caffeine, .dehydration], severity: 2),
+        Spec(daysAgo: 3.1,  duration: 295, peak: 198,
+             notes: "Woke me up. Felt lightheaded.",
+             symptoms: [.palpitations, .lightheaded, .anxiety],
+             triggers: [.poorSleep], severity: 4),
+        Spec(daysAgo: 1.4,  duration: 118, peak: 172,
+             notes: "After a light jog on the treadmill.",
+             symptoms: [.palpitations, .shortnessOfBreath],
+             triggers: [.exercise, .dehydration], severity: 2),
+        // One entry logged by hand, with no trace — the common case where an
+        // episode happens away from the watch.
+        Spec(daysAgo: 8.0,  duration: 150, peak: 0,
+             notes: "No watch on. Wrote it down straight after.",
+             symptoms: [.palpitations, .nausea],
+             triggers: [.stress], severity: 3, manual: true),
     ]
 
     /// Insert seed episodes if the store is currently empty. Idempotent.
@@ -33,16 +67,23 @@ enum SeedData {
         let now = Date()
         for spec in specs {
             let start = now.addingTimeInterval(-spec.daysAgo * 86_400)
-            let trace = makeTrace(duration: spec.duration, peak: spec.peak, seed: UInt64(spec.duration) &+ UInt64(spec.peak))
+            // A manually logged episode has no heart-rate trace, by definition.
+            let trace = spec.manual
+                ? []
+                : makeTrace(duration: spec.duration, peak: spec.peak, seed: UInt64(spec.duration) &+ UInt64(spec.peak))
             let avg = trace.isEmpty ? spec.peak : trace.reduce(0, +) / Double(trace.count)
             let episode = SVTEpisode(
                 startDate: start,
                 endDate: start.addingTimeInterval(spec.duration),
                 peakBPM: trace.max() ?? spec.peak,
                 avgBPM: avg,
-                sampleCount: max(trace.count, Int(spec.duration / 2)),
+                sampleCount: spec.manual ? 0 : max(trace.count, Int(spec.duration / 2)),
                 hrTrace: trace,
-                notes: spec.notes
+                notes: spec.notes,
+                symptoms: spec.symptoms,
+                triggers: spec.triggers,
+                perceivedSeverity: spec.severity,
+                isManualEntry: spec.manual
             )
             context.insert(episode)
         }
