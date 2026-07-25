@@ -16,6 +16,9 @@ struct SVTMonitorApp: App {
         _monitor = StateObject(wrappedValue: MonitorViewModel(settings: settings))
 
         do {
+            // Symptom / trigger / severity fields were added to `SVTEpisode`
+            // after v1.0. They all carry defaults, so SwiftData handles this as
+            // a lightweight migration and existing episode history is kept.
             container = try ModelContainer(for: SVTEpisode.self)
         } catch {
             fatalError("Failed to create the SwiftData container: \(error)")
