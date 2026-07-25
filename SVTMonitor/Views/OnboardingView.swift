@@ -12,7 +12,7 @@ struct OnboardingView: View {
     @State private var page = 0
     @State private var hkProvider = HealthKitHeartRateProvider()
 
-    private let lastPage = 2
+    private let lastPage = 3
 
     var body: some View {
         ZStack {
@@ -21,7 +21,8 @@ struct OnboardingView: View {
                 TabView(selection: $page) {
                     welcome.tag(0)
                     howItWorks.tag(1)
-                    permissions.tag(2)
+                    duringAnEpisode.tag(2)
+                    permissions.tag(3)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .animation(.easeInOut, value: page)
@@ -54,6 +55,15 @@ struct OnboardingView: View {
             iconTint: Theme.peachDeep,
             title: "How detection works",
             body: "You set an alert threshold (default 150 BPM). When your heart rate stays at or above it — or jumps suddenly, the way SVT often begins — the app records an episode with its start time, duration, and peak BPM."
+        )
+    }
+
+    private var duringAnEpisode: some View {
+        pageLayout(
+            icon: "wind",
+            iconTint: Theme.blueDeep,
+            title: "For the moment itself",
+            body: "When an episode starts, calm mode opens with a breathing guide to follow — plus reminders of any maneuvers your own care team has taught you. Afterwards you can tag what you felt and what might have set it off, so patterns show up over time instead of getting lost."
         )
     }
 

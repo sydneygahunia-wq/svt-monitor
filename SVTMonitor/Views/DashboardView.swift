@@ -6,14 +6,26 @@ import Charts
 struct DashboardView: View {
     @EnvironmentObject private var vm: MonitorViewModel
 
+    /// One presentation source for the screen — stacking several `.sheet`
+    /// modifiers on the same view is unreliable, so route them through one.
+    private enum Sheet: String, Identifiable {
+        case calm
+        case log
+        var id: String { rawValue }
+    }
+
+    @State private var sheet: Sheet?
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     heroCard
+                    calmButton
                     sparklineCard
                     if vm.isDemoSource { demoCard }
                     monitorButton
+                    logButton
                     footnote
                 }
                 .padding(.horizontal, 20)
@@ -29,7 +41,84 @@ struct DashboardView: View {
                 // the moment it opens; on-device HealthKit stays opt-in.
                 if vm.isDemoSource && !vm.isMonitoring { vm.startMonitoring() }
             }
+            .sheet(item: $sheet) { which in
+                switch which {
+                case .calm: CalmModeView().environmentObject(vm)
+                case .log:  LogEpisodeView()
+                }
+            }
+            .onChange(of: vm.status) { _, newStatus in
+                // When an episode starts, the breathing guide comes to the user
+                // rather than expecting them to go looking for it. Hunting
+                // through tabs is the last thing anyone wants to do mid-episode.
+                if newStatus == .episode && sheet == nil {
+                    sheet = .calm
+                }
+            }
         }
+    }
+
+    // MARK: Calm mode
+
+    /// The most important button on the screen during an episode, so it sits
+    /// directly under the heart rate and is styled to stand out when things are
+    /// actually happening.
+    private var calmButton: some View {
+        Button {
+            sheet = .calm
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "wind")
+                    .font(.system(size: 18, weight: .semibold))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(vm.status == .episode ? "Open calm mode" : "Calm mode")
+                        .font(Theme.rounded(18, .bold))
+                    Text(vm.status == .episode
+                         ? "Breathe through it"
+                         : "Guided breathing, any time")
+                        .font(Theme.rounded(13))
+                        .opacity(0.9)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .opacity(0.8)
+            }
+            .foregroundStyle(.white)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(vm.status == .episode ? Theme.peachDeep : Theme.blueDeep)
+            )
+            .shadow(
+                color: (vm.status == .episode ? Theme.peachDeep : Theme.blueDeep).opacity(0.35),
+                radius: 12, y: 6
+            )
+        }
+        .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.25), value: vm.status)
+    }
+
+    private var logButton: some View {
+        Button {
+            sheet = .log
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "square.and.pencil")
+                Text("Log an episode by hand")
+                    .font(Theme.rounded(15, .semibold))
+            }
+            .foregroundStyle(Theme.blueDeep)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(Theme.hairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: Hero

@@ -13,7 +13,11 @@ struct EpisodeDetailView: View {
         ScrollView {
             VStack(spacing: 20) {
                 statsCard
+                if episode.hasRedFlagSymptom { redFlagCard }
                 traceCard
+                symptomsCard
+                triggersCard
+                severityCard
                 notesCard
             }
             .padding(.horizontal, 20)
@@ -51,6 +55,113 @@ struct EpisodeDetailView: View {
                     MetricView(value: "\(Int(episode.peakBPM.rounded()))", label: "Peak BPM", tint: Theme.peachDeep, alignment: .center)
                     MetricView(value: "\(Int(episode.avgBPM.rounded()))", label: "Avg BPM", tint: Theme.blueDeep, alignment: .center)
                 }
+
+                if episode.isManualEntry || episode.usedCalmMode || episode.severityText != nil {
+                    FlowLayout(spacing: 6, lineSpacing: 6) {
+                        if let severity = episode.severityText {
+                            TagChip(title: severity, systemImage: "gauge.medium", tint: Theme.peachDeep)
+                        }
+                        if episode.isManualEntry {
+                            TagChip(title: "Logged by hand", systemImage: "square.and.pencil", tint: Theme.inkSecondary)
+                        }
+                        if episode.usedCalmMode {
+                            TagChip(title: "Used calm mode", systemImage: "wind", tint: Theme.blueDeep)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: Red flag notice
+
+    /// Shown when a tagged symptom is one that warrants urgent review. It is
+    /// intentionally not a diagnosis — it points at the care team, not at a
+    /// conclusion.
+    private var redFlagCard: some View {
+        Card {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 20))
+                    .foregroundStyle(Theme.peachDeep)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("Worth telling your care team")
+                        .font(Theme.rounded(16, .bold))
+                        .foregroundStyle(Theme.ink)
+                    Text("You tagged chest pain or nearly fainting during this episode. Those are worth raising with your cardiologist, and worth calling emergency services for if they happen again.")
+                        .font(Theme.rounded(14))
+                        .foregroundStyle(Theme.inkSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    // MARK: Tags
+
+    private var symptomSelection: Binding<Set<Symptom>> {
+        Binding(
+            get: { Set(episode.symptoms) },
+            set: { newValue in
+                episode.symptoms = Array(newValue)
+                try? context.save()
+            }
+        )
+    }
+
+    private var triggerSelection: Binding<Set<EpisodeTrigger>> {
+        Binding(
+            get: { Set(episode.triggers) },
+            set: { newValue in
+                episode.triggers = Array(newValue)
+                try? context.save()
+            }
+        )
+    }
+
+    private var severityBinding: Binding<Int> {
+        Binding(
+            get: { episode.perceivedSeverity },
+            set: { newValue in
+                episode.perceivedSeverity = newValue
+                try? context.save()
+            }
+        )
+    }
+
+    private var symptomsCard: some View {
+        Card {
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeader(title: "What you felt")
+                SymptomPicker(selection: symptomSelection)
+                if episode.symptoms.isEmpty {
+                    Text("Tagging symptoms takes a second now and saves you trying to remember at your next appointment.")
+                        .font(Theme.rounded(13))
+                        .foregroundStyle(Theme.inkSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
+    }
+
+    private var triggersCard: some View {
+        Card {
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeader(title: "Possible triggers")
+                TriggerPicker(selection: triggerSelection)
+                Text("One episode after coffee means nothing. A pattern across many is worth showing someone.")
+                    .font(Theme.rounded(13))
+                    .foregroundStyle(Theme.inkSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var severityCard: some View {
+        Card {
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeader(title: "How rough it felt")
+                SeverityPicker(severity: severityBinding)
             }
         }
     }
