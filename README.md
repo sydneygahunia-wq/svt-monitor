@@ -1,9 +1,11 @@
 # SVT Monitor
 
-An iOS heart-monitoring app that watches heart-rate patterns, flags possible
-**SVT (supraventricular tachycardia)** episodes with threshold-based alerting,
-and keeps a clear, patient-friendly log of each episode — its timestamp,
-duration, and peak BPM.
+An iOS app for living with **SVT (supraventricular tachycardia)**. It watches
+heart-rate patterns and flags possible episodes with threshold-based alerting,
+guides you through paced breathing while an episode is happening, and keeps a
+clear, patient-friendly log of each one — timestamp, duration, peak BPM, the
+symptoms you felt and anything that might have set it off — so you have
+something concrete to show your care team.
 
 Built with **Swift, SwiftUI, HealthKit, SwiftData and Swift Charts** for
 iOS 17. Designed to read live **Apple Watch** heart-rate data on device, with a
@@ -38,6 +40,21 @@ simulator).
   duration, peak BPM, average BPM, and a heart-rate trace you can chart.
 - **Trends** — episodes-per-week bars and peak-BPM-over-time scatter across a
   selectable 30 / 90 / all-time range.
+- **Calm mode** — opens by itself when an episode is detected. A guided
+  breathing circle (box breathing, longer exhale, or 4-7-8) you can follow with
+  your eyes shut, your live rate alongside it, reminders of any vagal maneuvers
+  *your own care team has taught you*, and a plain list of when to stop and call
+  for help.
+- **Symptom and trigger tagging** — tag what you felt (palpitations,
+  lightheaded, chest pressure, …) and what came before it (caffeine, stress,
+  poor sleep, exercise, …), plus a 1–5 rating for how rough it was.
+- **Manual logging** — episodes rarely wait until you're wearing a watch, so you
+  can write one down afterwards. Manual entries are first-class episodes, simply
+  flagged as hand-logged.
+- **Patterns** — the Trends tab counts your most-reported symptoms and triggers
+  across the selected range. It counts; it never claims causation.
+- **Appointment export** — share a plain-text summary of any range (counts,
+  durations, peaks, tags, and the full episode log) straight from the app.
 - **Tunable + honest** — adjustable threshold and sudden-onset sensitivity, a
   data-source switch (Apple Watch vs. Demo), permission controls, and a plainly
   worded medical disclaimer.
@@ -83,10 +100,17 @@ xcodebuild -project "SVTMonitor.xcodeproj" -scheme SVTMonitor \
   test
 ```
 
-`EpisodeDetectorTests` covers the onset rule, hysteresis exit, peak/average
-correctness, and robustness to duplicate / out-of-order samples. The test target
-compiles against the simulator SDK today; running it needs a booted simulator
-runtime.
+The test target covers the parts of the app where being wrong actually matters:
+
+| Suite | Covers |
+| --- | --- |
+| `EpisodeDetectorTests` | Onset rule, hysteresis exit, peak/average correctness, duplicate and out-of-order samples |
+| `BreathingPatternTests` | Phase ordering, cycle wrap-around, countdown rounding, zero-length and empty patterns, negative clock input |
+| `EpisodeInsightsTests` | Averages, severity exclusion, tag ranking and tie-breaking, duplicate/unknown raw tags, appointment-summary contents |
+| `SVTEpisodeTaggingTests` | Tag round-trip through `[String]` storage, unknown-value handling, red-flag detection, severity labels |
+
+The test target compiles against the simulator SDK today; running it needs a
+booted simulator runtime.
 
 ---
 
@@ -124,7 +148,11 @@ SVTMonitor/
 │                                    settings, and monitor view model
 ├── Models/
 │   ├── HeartRateSample.swift        value type: bpm, date, source
-│   ├── SVTEpisode.swift             @Model: timestamps, peak/avg BPM, trace, notes
+│   ├── SVTEpisode.swift             @Model: timestamps, peak/avg BPM, trace,
+│   │                                notes, symptoms, triggers, severity
+│   ├── Symptom.swift                what an episode felt like
+│   ├── EpisodeTrigger.swift         what may have preceded it
+│   ├── VagalManeuver.swift          reminder content + safety guidance
 │   ├── MonitorStatus.swift          idle / monitoring / episode
 │   └── AppSettings.swift            persisted threshold, onset delta, data source
 ├── Services/
@@ -132,6 +160,8 @@ SVTMonitor/
 │   ├── HealthKitHeartRateProvider.swift   live Apple Watch data (anchored query)
 │   ├── SimulatedHeartRateProvider.swift   demo generator (baseline + SVT episodes)
 │   ├── EpisodeDetector.swift        pure threshold state machine (unit-tested)
+│   ├── BreathingPattern.swift       pure paced-breathing clock (unit-tested)
+│   ├── EpisodeInsights.swift        pure tag/stat analysis + export (unit-tested)
 │   ├── NotificationManager.swift    lazy local-notification permission + delivery
 │   └── SeedData.swift               realistic demo history on first launch
 ├── ViewModels/
@@ -139,12 +169,14 @@ SVTMonitor/
 ├── Views/
 │   ├── RootView.swift               onboarding gate + 4-tab layout
 │   ├── DashboardView.swift          live BPM, beating heart, sparkline, controls
+│   ├── CalmModeView.swift           breathing guide, maneuver reminders, help card
+│   ├── LogEpisodeView.swift         manual episode entry
 │   ├── EpisodeListView.swift        newest-first list, swipe/menu delete
-│   ├── EpisodeDetailView.swift      stats, trace chart, editable notes
-│   ├── TrendsView.swift             per-week bars + peak scatter, range picker
+│   ├── EpisodeDetailView.swift      stats, trace chart, tags, notes
+│   ├── TrendsView.swift             per-week bars, peak scatter, tag patterns
 │   ├── SettingsView.swift           tuning, permissions, disclaimer, about
-│   ├── OnboardingView.swift         3-page intro shown once
-│   └── Components/                  PulsingHeartView, pills, chips, previews
+│   ├── OnboardingView.swift         4-page intro shown once
+│   └── Components/                  heart, pills, tag chips, flow layout, share
 ├── Theme/
 │   └── Theme.swift                  brand palette, typography, card styling
 └── Resources/
@@ -158,6 +190,28 @@ SVTMonitor/
 `EpisodeDetector` → on a finished episode the view model persists an
 `SVTEpisode` via SwiftData and posts a notification. Views read episodes
 directly with SwiftData `@Query`.
+
+Detection status also drives presentation: when `MonitorViewModel.status`
+becomes `.episode`, the dashboard presents **Calm Mode** without waiting to be
+asked, because navigating an app is the last thing anyone wants to do
+mid-episode. If the breathing guide is opened during an episode, the saved
+`SVTEpisode` records that too.
+
+---
+
+## A note on the maneuver reminders
+
+Calm Mode lists vagal maneuvers, and it is worth being explicit about what that
+is and isn't. The app does **not** teach these techniques and does not decide
+they are appropriate for you — that is a conversation with a cardiologist. Every
+entry is prefaced with the condition under which it applies ("only if your
+cardiologist has taught you this version"), the list is fronted by a
+non-dismissible disclaimer, and self-administered carotid massage is explicitly
+called out as something never to do alone rather than quietly left off the list.
+Alongside it sits a plain list of when to stop and call emergency services.
+
+The intent is recall support for something already taught, at the moment recall
+is hardest — not instruction.
 
 ---
 
