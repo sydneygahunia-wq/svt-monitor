@@ -28,36 +28,51 @@ simulator).
 
 ## What it does
 
-- **Live monitoring** — a calm dashboard with a heart that beats at your actual
-  current rate, a status pill (MONITORING / POSSIBLE EPISODE), and a rolling
-  90-second sparkline with the alert threshold drawn in.
-- **Automatic episode detection** — a threshold state machine records an episode
-  when your heart rate is sustained at/above the threshold *or* rises suddenly
-  (both hallmarks of SVT), and closes it once the rate settles back down.
-- **Threshold-based alerting** — when an episode is recorded you get a local
-  notification: *"Possible SVT episode recorded — 2m 14s, peak 182 BPM."*
-- **Episode tracking** — every episode is stored with its start timestamp,
-  duration, peak BPM, average BPM, and a heart-rate trace you can chart.
-- **Trends** — episodes-per-week bars and peak-BPM-over-time scatter across a
-  selectable 30 / 90 / all-time range.
-- **Calm mode** — opens by itself when an episode is detected. A guided
-  breathing circle (box breathing, longer exhale, or 4-7-8) you can follow with
-  your eyes shut, your live rate alongside it, reminders of any vagal maneuvers
-  *your own care team has taught you*, and a plain list of when to stop and call
-  for help.
-- **Symptom and trigger tagging** — tag what you felt (palpitations,
-  lightheaded, chest pressure, …) and what came before it (caffeine, stress,
-  poor sleep, exercise, …), plus a 1–5 rating for how rough it was.
-- **Manual logging** — episodes rarely wait until you're wearing a watch, so you
-  can write one down afterwards. Manual entries are first-class episodes, simply
-  flagged as hand-logged.
-- **Patterns** — the Trends tab counts your most-reported symptoms and triggers
-  across the selected range. It counts; it never claims causation.
-- **Appointment export** — share a plain-text summary of any range (counts,
-  durations, peaks, tags, and the full episode log) straight from the app.
-- **Tunable + honest** — adjustable threshold and sudden-onset sensitivity, a
-  data-source switch (Apple Watch vs. Demo), permission controls, and a plainly
-  worded medical disclaimer.
+### App Features
+
+**Live Heart Rate Monitoring**
+
+A simple dashboard that shows your current heart rate with an animated heart that beats at the same pace. It also shows whether your heart rate is normal or if a possible episode is happening. A graph displays your heart rate over the last 90 seconds along with your alert threshold.
+
+**Automatic Episode Detection**
+
+The app monitors your heart rate and detects possible SVT episodes when it stays above a certain threshold or suddenly increases. Once your heart rate returns to normal, the app automatically records when the episode ended.
+
+**Episode Alerts**
+
+When a possible episode is detected, the app sends a notification showing how long it lasted and the highest heart rate recorded.
+
+**Episode History**
+
+Every episode is saved with its start time, duration, highest heart rate and average heart rate. Users can also view a graph of how their heart rate changed throughout the episode.
+
+**Heart Rate Trends**
+
+A trends page helps users understand how their episodes change over time. It includes graphs showing how often episodes happen and the highest heart rates recorded. Users can view data from the past 30 days, 90 days or their entire history.
+
+**Calm Mode**
+
+When an episode is detected, the app automatically opens a calming screen. Users can follow guided breathing exercises while still seeing their current heart rate. It also includes reminders of techniques recommended by their healthcare provider and information about when to seek medical help.
+
+**Symptom and Trigger Tracking**
+
+After an episode, users can record symptoms such as dizziness or chest pressure. They can also log possible triggers like caffeine, stress, exercise or lack of sleep. Users can rate how severe the episode felt on a scale of 1 to 5.
+
+**Manual Episode Logging**
+
+Not everyone wears their Apple Watch all the time. Users can manually add episodes they experienced without their watch and include any details they remember.
+
+**Pattern Tracking**
+
+The app looks at previously recorded episodes to show which symptoms and possible triggers appear most often. This helps users recognize patterns without assuming that a particular trigger caused an episode.
+
+**Appointment Summaries**
+
+Users can export a summary of their episodes to share with their healthcare provider. The summary includes episode frequency, duration, heart rate measurements and recorded symptoms.
+
+**Customizable Settings**
+
+Users can adjust their heart rate thresholds and detection sensitivity. They can also switch between Apple Watch data and simulated data for testing. The app includes permission settings and a reminder that it is not a replacement for professional medical care.
 
 ---
 
