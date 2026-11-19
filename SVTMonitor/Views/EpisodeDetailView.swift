@@ -38,6 +38,7 @@ struct EpisodeDetailView: View {
                     Image(systemName: "waveform.path.ecg.rectangle.fill")
                         .font(.system(size: 22))
                         .foregroundStyle(Theme.alert)
+                        .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(episode.startDate.formatted(date: .complete, time: .omitted))
                             .font(Theme.font(15, .semibold))
@@ -50,10 +51,10 @@ struct EpisodeDetailView: View {
 
                 Divider().background(Theme.hairline)
 
-                HStack(spacing: 12) {
+                AdaptiveStack {
                     MetricView(value: episode.durationText, label: "Duration")
-                    MetricView(value: "\(Int(episode.peakBPM.rounded())) bpm", label: "Peak")
-                    MetricView(value: "\(Int(episode.avgBPM.rounded())) bpm", label: "Average")
+                    MetricView(value: bpmText(episode.peakBPM), label: "Peak")
+                    MetricView(value: bpmText(episode.avgBPM), label: "Average")
                 }
 
                 if episode.isManualEntry || episode.usedCalmMode || episode.severityText != nil {
@@ -73,6 +74,11 @@ struct EpisodeDetailView: View {
         }
     }
 
+    /// Zero means the value wasn't measured (a hand-logged episode).
+    private func bpmText(_ bpm: Double) -> String {
+        bpm > 0 ? "\(Int(bpm.rounded())) bpm" : "Not recorded"
+    }
+
     // MARK: Red flag notice
 
     /// Shown when a tagged symptom is one that warrants urgent review. It is
@@ -84,6 +90,7 @@ struct EpisodeDetailView: View {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 20))
                     .foregroundStyle(Theme.alert)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Worth telling your care team")
                         .font(Theme.font(16, .bold))

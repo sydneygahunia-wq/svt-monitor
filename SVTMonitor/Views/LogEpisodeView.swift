@@ -25,12 +25,18 @@ struct LogEpisodeView: View {
         TimeInterval(durationMinutes * 60 + durationSeconds)
     }
 
+    /// Anything outside this can't be a real heart rate, so it's almost
+    /// certainly a typo (an extra zero) rather than data worth keeping.
+    static let plausibleBPM: ClosedRange<Double> = 30...300
+
     private var peakBPM: Double? {
-        guard knowsPeak, let value = Double(peakBPMText), value > 0 else { return nil }
+        guard knowsPeak, let value = Double(peakBPMText), Self.plausibleBPM.contains(value) else { return nil }
         return value
     }
 
-    private var canSave: Bool { duration > 0 }
+    private var peakIsInvalid: Bool { knowsPeak && !peakBPMText.isEmpty && peakBPM == nil }
+
+    private var canSave: Bool { duration > 0 && !peakIsInvalid }
 
     var body: some View {
         NavigationStack {
@@ -123,6 +129,7 @@ struct LogEpisodeView: View {
                     HStack(spacing: 10) {
                         TextField("e.g. 180", text: $peakBPMText)
                             .keyboardType(.numberPad)
+                            .accessibilityLabel("Peak heart rate, beats per minute")
                             .font(Theme.font(20, .semibold))
                             .padding(.horizontal, 14)
                             .padding(.vertical, 12)
@@ -130,9 +137,15 @@ struct LogEpisodeView: View {
                                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                                     .fill(Theme.background)
                             )
-                        Text("BPM")
+                        Text("bpm")
                             .font(Theme.font(16, .semibold))
                             .foregroundStyle(Theme.inkSecondary)
+                            .accessibilityHidden(true)
+                    }
+                    if peakIsInvalid {
+                        Text("Enter a number between \(Int(Self.plausibleBPM.lowerBound)) and \(Int(Self.plausibleBPM.upperBound)).")
+                            .font(Theme.font(13))
+                            .foregroundStyle(Theme.alert)
                     }
                 } else {
                     Text("That's fine — leave it off and the episode is still recorded.")
@@ -195,7 +208,9 @@ struct LogEpisodeView: View {
             startDate: startDate,
             endDate: startDate.addingTimeInterval(duration),
             peakBPM: peak,
-            avgBPM: peak,
+            // There's no trace for a hand-logged episode, so there is no real
+            // average. Zero means "unknown" and is hidden in the UI.
+            avgBPM: 0,
             sampleCount: 0,
             hrTrace: [],
             notes: notes.trimmingCharacters(in: .whitespacesAndNewlines),

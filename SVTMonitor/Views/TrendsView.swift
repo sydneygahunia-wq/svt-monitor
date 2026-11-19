@@ -35,7 +35,7 @@ struct TrendsView: View {
                         overviewCard
                         patternsCard
                         weeklyCard
-                        peakCard
+                        if !measuredPeaks.isEmpty { peakCard }
                         shareCard
                     }
                 }
@@ -117,11 +117,13 @@ struct TrendsView: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(tint)
                         .frame(width: 20)
+                        .accessibilityHidden(true)
 
                     Text(row.0)
                         .font(Theme.font(14))
                         .foregroundStyle(Theme.ink)
-                        .frame(width: 130, alignment: .leading)
+                        .frame(minWidth: 90, idealWidth: 130, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
@@ -139,6 +141,9 @@ struct TrendsView: View {
                         .foregroundStyle(Theme.inkSecondary)
                         .frame(width: 24, alignment: .trailing)
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(row.0)
+                .accessibilityValue("\(row.2) episode\(row.2 == 1 ? "" : "s")")
             }
         }
     }
@@ -204,12 +209,17 @@ struct TrendsView: View {
 
     private var overviewCard: some View {
         Card {
-            HStack(spacing: 12) {
+            AdaptiveStack {
                 MetricView(value: "\(filtered.count)", label: "Episodes")
-                MetricView(value: "\(Int(filtered.map(\.peakBPM).max() ?? 0)) bpm", label: "Highest peak")
+                MetricView(value: highestPeakText, label: "Highest peak")
                 MetricView(value: avgDurationText, label: "Typical length")
             }
         }
+    }
+
+    private var highestPeakText: String {
+        guard let peak = measuredPeaks.map(\.peakBPM).max() else { return "Not recorded" }
+        return "\(Int(peak.rounded())) bpm"
     }
 
     private var avgDurationText: String {
@@ -230,6 +240,8 @@ struct TrendsView: View {
                     )
                     .cornerRadius(3)
                     .foregroundStyle(Theme.accent)
+                    .accessibilityLabel("Week of \(bucket.weekStart.formatted(.dateTime.month(.wide).day()))")
+                    .accessibilityValue("\(bucket.count) episode\(bucket.count == 1 ? "" : "s")")
                 }
                 .chartYAxis {
                     AxisMarks(position: .trailing, values: .automatic(desiredCount: 4)) { _ in
@@ -251,13 +263,16 @@ struct TrendsView: View {
         Card {
             VStack(alignment: .leading, spacing: 12) {
                 SectionHeader(title: "Peak heart rate")
-                Chart(filtered) { episode in
+                // Hand-logged episodes without a known peak have nothing to plot.
+                Chart(measuredPeaks) { episode in
                     PointMark(
                         x: .value("Date", episode.startDate),
                         y: .value("Peak BPM", episode.peakBPM)
                     )
                     .foregroundStyle(Theme.alert)
                     .symbolSize(50)
+                    .accessibilityLabel(episode.startDate.formatted(date: .abbreviated, time: .shortened))
+                    .accessibilityValue("Peak \(Int(episode.peakBPM.rounded())) beats per minute")
                 }
                 .chartYScale(domain: peakDomain)
                 .chartYAxis {
@@ -266,7 +281,7 @@ struct TrendsView: View {
                         AxisValueLabel {
                             if let v = value.as(Double.self) {
                                 Text("\(Int(v))")
-                                    .font(Theme.font(10))
+                                    .font(Theme.number(11, .regular))
                                     .foregroundStyle(Theme.inkSecondary)
                             }
                         }
@@ -282,8 +297,10 @@ struct TrendsView: View {
         }
     }
 
+    private var measuredPeaks: [SVTEpisode] { filtered.filter { $0.peakBPM > 0 } }
+
     private var peakDomain: ClosedRange<Double> {
-        let peaks = filtered.map(\.peakBPM)
+        let peaks = measuredPeaks.map(\.peakBPM)
         let lo = (peaks.min() ?? 140) - 15
         let hi = (peaks.max() ?? 200) + 15
         return lo...hi
@@ -294,6 +311,7 @@ struct TrendsView: View {
             Image(systemName: "chart.xyaxis.line")
                 .font(.system(size: 40, weight: .light))
                 .foregroundStyle(Theme.inkSecondary)
+                .accessibilityHidden(true)
             Text("No episodes in this range")
                 .font(Theme.font(19, .bold))
                 .foregroundStyle(Theme.ink)

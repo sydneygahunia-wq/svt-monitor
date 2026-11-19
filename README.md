@@ -32,7 +32,7 @@ simulator).
 
 **Live Heart Rate Monitoring**
 
-A simple dashboard that shows your current heart rate with an animated heart that beats at the same pace. It also shows whether your heart rate is normal or if a possible episode is happening. A graph displays your heart rate over the last 90 seconds along with your alert threshold.
+A simple dashboard that shows your current heart rate, with a small heart beside it that beats at the same pace (it stays still when Reduce Motion is on). It also shows whether you're being monitored or a possible episode is happening. A graph displays your heart rate over the last 90 seconds along with your alert level.
 
 **Automatic Episode Detection**
 
@@ -52,7 +52,7 @@ A trends page helps users understand how their episodes change over time. It inc
 
 **Calm Mode**
 
-When an episode is detected, the app automatically opens a calming screen. Users can follow guided breathing exercises while still seeing their current heart rate. It also includes reminders of techniques recommended by their healthcare provider and information about when to seek medical help.
+When an episode is detected, the app automatically opens a calming screen. Users can follow a paced breathing guide (4 in, 6 out by default, which is six breaths a minute) while still seeing their current heart rate. The screen says plainly that slow breathing helps you stay steady but isn't proven to stop an episode. It also includes reminders of vagal maneuvers a care team may have taught, and the NHS criteria for calling emergency services.
 
 **Symptom and Trigger Tracking**
 
@@ -123,9 +123,9 @@ The test target covers the parts of the app where being wrong actually matters:
 | `BreathingPatternTests` | Phase ordering, cycle wrap-around, countdown rounding, zero-length and empty patterns, negative clock input |
 | `EpisodeInsightsTests` | Averages, severity exclusion, tag ranking and tie-breaking, duplicate/unknown raw tags, appointment-summary contents |
 | `SVTEpisodeTaggingTests` | Tag round-trip through `[String]` storage, unknown-value handling, red-flag detection, severity labels |
+| `HealthContentTests` | Modified Valsalva timings match the REVERT trial, every maneuver starts seated or lying, carotid warning present, emergency criteria match the NHS, default breathing is six breaths a minute, sources are valid HTTPS links, implausible typed heart rates are rejected |
 
-The test target compiles against the simulator SDK today; running it needs a
-booted simulator runtime.
+53 tests, all passing on the iOS 17.5 simulator.
 
 ---
 
@@ -214,6 +214,61 @@ mid-episode. If the breathing guide is opened during an episode, the saved
 
 ---
 
+## Accessibility
+
+Someone opening this app may be mid-episode, dizzy, or reading at night, so
+accessibility is treated as a core requirement, not a polish pass.
+
+- **Contrast.** Every text color meets WCAG 2.2 AA (at least 4.5:1) against
+  both surfaces it sits on, in light and dark mode. The ratios are written next
+  to each color in `Theme.swift`. Text on filled buttons switches to black in
+  dark mode, where white on the brighter fills would fall below 3:1.
+- **Dynamic Type.** All text scales with the system text size, up to the largest
+  accessibility size. Rows of metrics, the status line and episode rows switch
+  from side by side to stacked at those sizes instead of truncating. The 80pt
+  heart-rate reading grows less, so it doesn't push everything else off screen.
+- **VoiceOver.** Decorative icons are hidden, so each control reads as one
+  clear phrase. Section titles are headers you can jump between with the rotor.
+  The 1 to 5 severity rating is a single adjustable control (swipe up or down),
+  the selected breathing pace is announced as selected, and chart bars and
+  points have spoken values.
+- **Reduce Motion.** The beating heart stays still, and the breathing circle
+  changes size without the slow grow and shrink. The phase words, countdown and
+  haptic tap still pace the breath.
+- **Color is never the only signal.** A possible episode is shown in amber
+  *and* says "Possible episode" in words.
+- **Tap targets** are at least 44pt, Apple's recommended minimum.
+
+---
+
+## Sources
+
+The health guidance in the app is sourced, and the same list is in the app
+under **Settings › Sources**. `HealthContentTests` fail if the maneuver timings
+or emergency criteria drift from these.
+
+| Source | Used for |
+| --- | --- |
+| [Mayo Clinic: SVT symptoms and causes](https://www.mayoclinic.org/diseases-conditions/supraventricular-tachycardia/symptoms-causes/syc-20355243) | Typical SVT rates (about 150 to 220 bpm), sudden start and stop, symptoms, when an undiagnosed fast heartbeat needs emergency care |
+| [NHS: Supraventricular tachycardia](https://www.nhs.uk/conditions/supraventricular-tachycardia-svt/) | When to call emergency services; not driving yourself |
+| [Appelboam et al., *The Lancet* 2015 (REVERT trial)](https://doi.org/10.1016/S0140-6736(15)61485-4) | Modified Valsalva steps and timings; standard Valsalva strain length |
+| [HealthLink BC: Vagal manoeuvres for SVT](https://www.healthlinkbc.ca/Node/4413) | Bearing down, a cold wet towel on the face, coughing; carotid massage only by a doctor |
+| [Laborde et al., *Neuroscience & Biobehavioral Reviews* 2022](https://doi.org/10.1016/j.neubiorev.2022.104711) | Slow breathing raising heart rate variability, the basis for the breathing guide |
+| [Apple Support: Monitor your heart rate](https://support.apple.com/en-us/120277) | Apple Watch measuring heart rate periodically, not continuously |
+
+## Limitations
+
+- **Apple Watch readings are periodic.** Outside a workout, the watch measures
+  heart rate now and then through the day, so a short episode can fall between
+  readings. That's why manual logging exists. Truly continuous readings would
+  need a companion watchOS app running a workout session.
+- **Detection is a rule, not a diagnosis.** A high, sustained or sudden rise in
+  heart rate is consistent with SVT but also with exercise, fever or anxiety.
+  Only an ECG can tell which rhythm it is.
+- **Not a medical device**, and not reviewed by a clinician.
+
+---
+
 ## A note on the maneuver reminders
 
 Calm Mode lists vagal maneuvers, and it is worth being explicit about what that
@@ -232,9 +287,8 @@ is hardest — not instruction.
 
 ## Notes on the project file
 
-The Xcode project is generated from `project.yml` with
-[XcodeGen](https://github.com/yonaskolb/XcodeGen) (a prebuilt binary lives in
-`xcodegen/`). The committed `SVTMonitor.xcodeproj` is pinned to
+The Xcode project can be regenerated from `project.yml` with
+[XcodeGen](https://github.com/yonaskolb/XcodeGen). The committed `SVTMonitor.xcodeproj` is pinned to
 `objectVersion = 56` so it opens in Xcode 15.4. If you regenerate with
 `xcodegen generate`, re-apply that pin:
 

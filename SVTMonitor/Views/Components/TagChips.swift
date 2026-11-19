@@ -11,6 +11,7 @@ struct TagChip: View {
         HStack(spacing: 5) {
             Image(systemName: systemImage)
                 .font(.system(size: 11, weight: .semibold))
+                .accessibilityHidden(true)
             Text(title)
                 .font(Theme.font(13, .semibold))
         }
@@ -34,12 +35,15 @@ struct SelectableChip: View {
             HStack(spacing: 6) {
                 Image(systemName: systemImage)
                     .font(.system(size: 12, weight: .semibold))
+                    .accessibilityHidden(true)
                 Text(title)
                     .font(Theme.font(15, .semibold))
             }
-            .foregroundStyle(isSelected ? .white : Theme.ink)
+            .foregroundStyle(isSelected ? Theme.onFill : Theme.ink)
             .padding(.horizontal, 14)
-            .padding(.vertical, 10)
+            .padding(.vertical, 8)
+            // 44pt is Apple's minimum comfortable tap target.
+            .frame(minHeight: 44)
             .background(
                 Capsule().fill(isSelected ? tint : Theme.background)
             )
@@ -172,7 +176,7 @@ struct SeverityPicker: View {
                     } label: {
                         Text("\(value)")
                             .font(Theme.font(17, .bold))
-                            .foregroundStyle(severity >= value && severity > 0 ? .white : Theme.inkSecondary)
+                            .foregroundStyle(severity >= value && severity > 0 ? Theme.onFill : Theme.inkSecondary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                             .background(
@@ -191,6 +195,20 @@ struct SeverityPicker: View {
             Text(SVTEpisode.severityLabel(severity) ?? "Tap to rate how it felt")
                 .font(Theme.font(14))
                 .foregroundStyle(Theme.inkSecondary)
+        }
+        // Five unlabeled "1…5" buttons mean nothing read aloud, so VoiceOver
+        // gets one adjustable control instead: swipe up or down to change it.
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("How rough it felt")
+        .accessibilityValue(severity == 0
+                            ? "Not rated"
+                            : "\(severity) of 5, \(SVTEpisode.severityLabel(severity) ?? "")")
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment: severity = min(5, severity + 1)
+            case .decrement: severity = max(0, severity - 1)
+            @unknown default: break
+            }
         }
     }
 }

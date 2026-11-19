@@ -4,13 +4,19 @@ import SwiftData
 /// Gates onboarding vs. the main app.
 struct RootView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        if hasCompletedOnboarding {
-            MainTabView()
-        } else {
-            OnboardingView()
+        Group {
+            if hasCompletedOnboarding {
+                MainTabView()
+            } else {
+                OnboardingView()
+            }
         }
+        // Theme fonts are resolved for the text size in effect when they're
+        // built, so rebuild when the user changes it in Settings.
+        .id(dynamicTypeSize)
     }
 }
 

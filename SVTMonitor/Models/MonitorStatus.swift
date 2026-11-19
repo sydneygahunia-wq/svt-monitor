@@ -20,7 +20,7 @@ enum MonitorStatus: Equatable {
     var tint: Color {
         switch self {
         case .idle: return Theme.inkSecondary
-        case .monitoring: return Color(uiColor: .systemGreen)
+        case .monitoring: return Theme.ok
         case .episode: return Theme.alert
         }
     }

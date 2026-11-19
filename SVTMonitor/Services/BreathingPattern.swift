@@ -132,7 +132,7 @@ struct BreathingPattern: Identifiable, Equatable {
     static let box = BreathingPattern(
         id: "box",
         name: "Box breathing",
-        subtitle: "Even counts. Easiest to follow first.",
+        subtitle: "Even counts of four, with short holds.",
         steps: [
             Step(phase: .inhale,  duration: 4),
             Step(phase: .holdIn,  duration: 4),
@@ -145,7 +145,7 @@ struct BreathingPattern: Identifiable, Equatable {
     static let extendedExhale = BreathingPattern(
         id: "extended-exhale",
         name: "Longer exhale",
-        subtitle: "Breathe out for longer than you breathe in.",
+        subtitle: "Six breaths a minute. A good place to start.",
         steps: [
             Step(phase: .inhale, duration: 4),
             Step(phase: .exhale, duration: 6)
@@ -156,7 +156,7 @@ struct BreathingPattern: Identifiable, Equatable {
     static let fourSevenEight = BreathingPattern(
         id: "4-7-8",
         name: "4-7-8",
-        subtitle: "A slower pattern for once things settle.",
+        subtitle: "Long holds. Better once things have settled.",
         steps: [
             Step(phase: .inhale, duration: 4),
             Step(phase: .holdIn, duration: 7),
@@ -164,5 +164,10 @@ struct BreathingPattern: Identifiable, Equatable {
         ]
     )
 
-    static let all: [BreathingPattern] = [.box, .extendedExhale, .fourSevenEight]
+    /// Longer exhale comes first: 4 in, 6 out is six breaths a minute, the
+    /// slow-breathing rate most often studied, and slow breathing reliably
+    /// raises vagally mediated heart rate variability (Laborde et al., 2022).
+    /// None of these patterns is shown to end an SVT episode; they're for
+    /// staying steady while it happens.
+    static let all: [BreathingPattern] = [.extendedExhale, .box, .fourSevenEight]
 }

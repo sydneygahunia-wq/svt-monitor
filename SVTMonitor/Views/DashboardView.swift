@@ -17,6 +17,7 @@ struct DashboardView: View {
     }
 
     @State private var sheet: Sheet?
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     private var inEpisode: Bool { vm.status == .episode }
 
@@ -44,6 +45,7 @@ struct DashboardView: View {
                 if vm.isMonitoring {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Stop") { vm.toggleMonitoring() }
+                            .accessibilityLabel("Stop monitoring")
                     }
                 }
             }
@@ -73,10 +75,10 @@ struct DashboardView: View {
 
     private var readout: some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 6) {
+            AdaptiveStack(spacing: 6) {
                 StatusPill(status: vm.status)
                 if let updated = updatedText {
-                    Text("· \(updated)")
+                    Text(typeSize.isAccessibilitySize ? "Updated \(updated)" : "· \(updated)")
                         .font(Theme.font(15))
                         .foregroundStyle(Theme.inkSecondary)
                 }
@@ -168,11 +170,12 @@ struct DashboardView: View {
 
     private var chartSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .firstTextBaseline) {
+            AdaptiveStack(spacing: 4) {
                 Text("Last 90 seconds")
                     .font(Theme.font(17, .semibold))
                     .foregroundStyle(Theme.ink)
-                Spacer()
+                    .accessibilityAddTraits(.isHeader)
+                if !typeSize.isAccessibilitySize { Spacer() }
                 Text("Alert at \(Int(vm.thresholdBPM))")
                     .font(Theme.font(13))
                     .foregroundStyle(Theme.inkSecondary)
@@ -285,6 +288,7 @@ struct DashboardView: View {
                     .font(.system(size: 17, weight: .medium))
                     .foregroundStyle(tint)
                     .frame(width: 24)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 1) {
                     Text(title)
                         .font(Theme.font(17))
@@ -297,6 +301,7 @@ struct DashboardView: View {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(Color(uiColor: .tertiaryLabel))
+                    .accessibilityHidden(true)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 11)

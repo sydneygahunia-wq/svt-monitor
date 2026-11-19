@@ -8,6 +8,8 @@ import Foundation
 /// how to do safely. All this screen does is remind someone mid-episode of what
 /// they were already taught, when recall is hardest. Anything the user has not
 /// been taught, they should skip.
+///
+/// Sources for each step are listed in `Sources.swift` and the README.
 struct VagalManeuver: Identifiable, Equatable {
     let id: String
     let title: String
@@ -22,12 +24,15 @@ struct VagalManeuver: Identifiable, Equatable {
     static let modifiedValsalva = VagalManeuver(
         id: "modified-valsalva",
         title: "Modified Valsalva",
-        summary: "Bear down while sitting, then lie back with your legs raised.",
+        summary: "Strain while propped up, then lie flat with your legs raised.",
+        // Timings follow the REVERT trial (Appelboam et al., Lancet 2015):
+        // 15 s strain semi-reclined, 15 s flat with legs raised, then 45 s
+        // back in the semi-reclined position before checking the rhythm.
         steps: [
-            "Sit down somewhere safe before you start.",
-            "Take a breath in and bear down as if straining, for about 15 seconds.",
-            "Lie back and have someone raise your legs for around 45 seconds.",
-            "Rest afterwards and check whether your rate has settled."
+            "Sit propped up at about 45 degrees, on a bed or sofa.",
+            "Breathe in, then strain hard for 15 seconds, as if blowing into a blocked straw.",
+            "Straight away, lie flat while someone lifts your legs to about 45 degrees, for 15 seconds.",
+            "Return to sitting propped up for 45 seconds, then check your heart rate."
         ],
         precondition: "Only if your cardiologist has taught you this version.",
         systemImage: "figure.flexibility"
@@ -38,9 +43,9 @@ struct VagalManeuver: Identifiable, Equatable {
         title: "Valsalva (bearing down)",
         summary: "Bear down against a closed airway for a short count.",
         steps: [
-            "Sit or lie down first — never do this standing up.",
-            "Take a breath in, close your mouth, and bear down as if straining.",
-            "Hold for about 10 to 15 seconds, then release and breathe normally.",
+            "Sit propped up or lie down first. Never do this standing.",
+            "Breathe in, close your mouth, and bear down as if straining.",
+            "Hold for about 15 seconds, then release and breathe normally.",
             "Wait a moment before deciding whether to try again."
         ],
         precondition: "Only if you have been shown how, and only seated or lying down.",
@@ -50,11 +55,11 @@ struct VagalManeuver: Identifiable, Equatable {
     static let coldWater = VagalManeuver(
         id: "cold-water",
         title: "Cold on the face",
-        summary: "Cold water or a cold pack against the face.",
+        summary: "An ice-cold, wet towel held against the face.",
         steps: [
-            "Sit down near a sink, or hold a cold pack ready.",
-            "Splash cold water on your face, or hold the cold pack against your cheeks and forehead.",
-            "Keep breathing — do not hold your breath underwater.",
+            "Sit down and soak a towel or cloth in ice-cold water.",
+            "Hold it against your forehead, eyes and cheeks.",
+            "Keep it there briefly, then take it away and breathe normally.",
             "Give it a few moments before trying anything else."
         ],
         precondition: "Skip this if you have been told to avoid cold exposure.",
@@ -93,11 +98,11 @@ struct VagalManeuver: Identifiable, Equatable {
 
     /// Urgent-care guidance, shown alongside the maneuvers.
     static let seekHelpPoints: [String] = [
-        "Chest pain or pressure that does not ease",
-        "Fainting, or feeling like you are about to faint",
-        "Severe shortness of breath",
-        "An episode that lasts longer than your care team told you to wait out",
-        "Anything that feels different or worse than your usual episodes"
+        "Chest pain",
+        "Feeling faint, or fainting",
+        "Shortness of breath",
+        "An episode that lasts longer than your usual ones",
+        "A very fast heartbeat for more than a few minutes, if you haven't been diagnosed with SVT"
     ]
 
     static let seekHelpFooter = """

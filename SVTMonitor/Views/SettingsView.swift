@@ -191,6 +191,7 @@ struct SettingsView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "exclamationmark.shield.fill")
                         .foregroundStyle(Theme.alert)
+                        .accessibilityHidden(true)
                     Text("Important")
                         .font(Theme.font(16, .bold))
                         .foregroundStyle(Theme.ink)
@@ -228,6 +229,24 @@ struct SettingsView: View {
                         .font(Theme.font(15, .semibold))
                         .foregroundStyle(Theme.inkSecondary)
                 }
+                Divider().background(Theme.hairline)
+                NavigationLink {
+                    SourcesView()
+                } label: {
+                    HStack {
+                        Text("Sources")
+                            .font(Theme.font(15, .medium))
+                            .foregroundStyle(Theme.ink)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(Color(uiColor: .tertiaryLabel))
+                            .accessibilityHidden(true)
+                    }
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
         }
     }

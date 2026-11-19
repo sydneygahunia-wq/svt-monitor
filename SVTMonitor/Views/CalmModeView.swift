@@ -11,12 +11,13 @@ import UIKit
 struct CalmModeView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var monitor: MonitorViewModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// Tick rate for the pacing clock. Phase transitions drive the animation,
     /// so this only needs to be fast enough for a smooth countdown.
     private static let tick: TimeInterval = 0.2
 
-    @State private var pattern: BreathingPattern = .box
+    @State private var pattern: BreathingPattern = BreathingPattern.all[0]
     @State private var elapsed: TimeInterval = 0
     @State private var currentPhase: BreathingPattern.Phase = .inhale
     @State private var circleScale: CGFloat = Self.smallScale
@@ -86,7 +87,7 @@ struct CalmModeView: View {
                 if let state {
                     Text("\(state.secondsRemaining)")
                         .font(Theme.number(48, .medium))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Theme.onFill)
                         .contentTransition(.numericText())
                 }
             }
@@ -106,7 +107,7 @@ struct CalmModeView: View {
                     .font(Theme.font(15))
                     .foregroundStyle(Theme.inkSecondary)
             } else {
-                Text("Follow the circle. Nothing else to do.")
+                Text("Slow breathing can help you feel steadier. It isn't proven to stop an episode.")
                     .font(Theme.font(15))
                     .foregroundStyle(Theme.inkSecondary)
             }
@@ -125,6 +126,7 @@ struct CalmModeView: View {
                             Image(systemName: pattern.id == option.id ? "largecircle.fill.circle" : "circle")
                                 .font(.system(size: 20))
                                 .foregroundStyle(pattern.id == option.id ? Theme.calm : Theme.hairline)
+                                .accessibilityHidden(true)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(option.name == option.rhythmText ? option.name : "\(option.name) · \(option.rhythmText)")
                                     .font(Theme.font(16, .semibold))
@@ -139,6 +141,7 @@ struct CalmModeView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .accessibilityAddTraits(pattern.id == option.id ? [.isSelected] : [])
                 }
             }
         }
@@ -150,6 +153,7 @@ struct CalmModeView: View {
                 Image(systemName: "heart.fill")
                     .font(.system(size: 22))
                     .foregroundStyle(Theme.accent)
+                    .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(bpm) bpm")
                         .font(Theme.number(24))
@@ -185,10 +189,12 @@ struct CalmModeView: View {
                         Image(systemName: showManeuvers ? "chevron.up" : "chevron.down")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(Theme.inkSecondary)
+                            .accessibilityHidden(true)
                     }
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityValue(showManeuvers ? "Expanded" : "Collapsed")
 
                 if showManeuvers {
                     Text(VagalManeuver.disclaimer)
@@ -209,6 +215,7 @@ struct CalmModeView: View {
                         Image(systemName: "hand.raised.fill")
                             .font(.system(size: 14))
                             .foregroundStyle(Theme.alert)
+                            .accessibilityHidden(true)
                         Text(VagalManeuver.neverDoAlone)
                             .font(Theme.font(13, .semibold))
                             .foregroundStyle(Theme.ink)
@@ -225,6 +232,7 @@ struct CalmModeView: View {
                 Image(systemName: maneuver.systemImage)
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(Theme.calm)
+                    .accessibilityHidden(true)
                 Text(maneuver.title)
                     .font(Theme.font(16, .bold))
                     .foregroundStyle(Theme.ink)
@@ -260,6 +268,7 @@ struct CalmModeView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "cross.case.fill")
                         .foregroundStyle(Theme.alert)
+                        .accessibilityHidden(true)
                     Text("Get help now if you have")
                         .font(Theme.font(17, .bold))
                         .foregroundStyle(Theme.ink)
@@ -302,8 +311,14 @@ struct CalmModeView: View {
             ? Self.largeScale
             : Self.smallScale
 
-        withAnimation(.easeInOut(duration: max(duration, 0.2))) {
+        // With Reduce Motion on, the circle changes size without the slow
+        // grow and shrink. The phase words, countdown and haptic still pace you.
+        if reduceMotion {
             circleScale = target
+        } else {
+            withAnimation(.easeInOut(duration: max(duration, 0.2))) {
+                circleScale = target
+            }
         }
 
         // A light tap on each change means the guide can be followed with your

@@ -11,8 +11,14 @@ struct PulsingHeartView: View {
     let bpm: Int?
     var tint: Color
 
+    /// With Reduce Motion on, the heart stays still; the number beside it
+    /// already says how fast it's beating.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var animates: Bool { bpm != nil && !reduceMotion }
+
     var body: some View {
-        TimelineView(.animation(paused: bpm == nil)) { timeline in
+        TimelineView(.animation(paused: !animates)) { timeline in
             let interval = beatInterval
             let t = timeline.date.timeIntervalSinceReferenceDate
             let phase = (t.truncatingRemainder(dividingBy: interval)) / interval
@@ -22,7 +28,7 @@ struct PulsingHeartView: View {
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(bpm == nil ? Theme.inkSecondary : tint)
-                .scaleEffect(bpm == nil ? 1 : scale)
+                .scaleEffect(animates ? scale : 1)
         }
         .accessibilityHidden(true)
     }

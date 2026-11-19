@@ -43,6 +43,9 @@
 		26CA635859FD74F215DEAEEE /* BreathingPatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28449BE9053D980838DC6254 /* BreathingPatternTests.swift */; };
 		808FB1FD59F7135CD33E1BFF /* EpisodeInsightsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A53ACA64B2B8E7235760 /* EpisodeInsightsTests.swift */; };
 		117B071A4895ED7A0D3AF859 /* SVTEpisodeTaggingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CC6C221AED31FC4BFC05F5 /* SVTEpisodeTaggingTests.swift */; };
+		A1B2C3D4E5F60718293A4B5D /* Sources.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* Sources.swift */; };
+		A1B2C3D4E5F60718293A4B5F /* SourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5E /* SourcesView.swift */; };
+		A1B2C3D4E5F60718293A4B61 /* HealthContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B60 /* HealthContentTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,6 +99,9 @@
 		28449BE9053D980838DC6254 /* BreathingPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingPatternTests.swift; sourceTree = "<group>"; };
 		A1E3A53ACA64B2B8E7235760 /* EpisodeInsightsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeInsightsTests.swift; sourceTree = "<group>"; };
 		88CC6C221AED31FC4BFC05F5 /* SVTEpisodeTaggingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVTEpisodeTaggingTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5C /* Sources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B5E /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B60 /* HealthContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthContentTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -180,6 +186,7 @@
 				95E1796DEAD700BB2939A7C0 /* Symptom.swift */,
 				F0B894B8C9E9A56E1D079268 /* EpisodeTrigger.swift */,
 				272890DBCEFB69754EC2C5D6 /* VagalManeuver.swift */,
+				A1B2C3D4E5F60718293A4B5C /* Sources.swift */,
 				6867937B4A468108F9CD694D /* AppSettings.swift */,
 				C7791369FF5702F3B3FEC956 /* HeartRateSample.swift */,
 				6D26AE6A0A7D4D81F008222C /* MonitorStatus.swift */,
@@ -208,6 +215,7 @@
 				C141392FAE0AE38EDA6A9DEF /* OnboardingView.swift */,
 				7034731C8B3B146E0BDDF345 /* RootView.swift */,
 				C2328C1E9021EB1E46D93327 /* SettingsView.swift */,
+				A1B2C3D4E5F60718293A4B5E /* SourcesView.swift */,
 				115A9F151C52B6E51D70A921 /* TrendsView.swift */,
 			);
 			path = Views;
@@ -217,6 +225,7 @@
 			isa = PBXGroup;
 			children = (
 				28449BE9053D980838DC6254 /* BreathingPatternTests.swift */,
+				A1B2C3D4E5F60718293A4B60 /* HealthContentTests.swift */,
 				A1E3A53ACA64B2B8E7235760 /* EpisodeInsightsTests.swift */,
 				88CC6C221AED31FC4BFC05F5 /* SVTEpisodeTaggingTests.swift */,
 				29CFCDCAD7219729738D0DE6 /* EpisodeDetectorTests.swift */,
@@ -322,6 +331,7 @@
 				49BDD0739E494BA58E7B27E7 /* Symptom.swift in Sources */,
 				2EF075AE97978648453B1A1A /* EpisodeTrigger.swift in Sources */,
 				3C6F6236EC3376FFAA2A6FD2 /* VagalManeuver.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5D /* Sources.swift in Sources */,
 				3098738D6684CF2A9A77DFAC /* BreathingPattern.swift in Sources */,
 				C65E2802ECE68300D565617B /* EpisodeInsights.swift in Sources */,
 				89F6A37CC778D2CE1064AA23 /* CalmModeView.swift in Sources */,
@@ -347,6 +357,7 @@
 				A6E091916153DFB7D096DB3D /* SVTMonitorApp.swift in Sources */,
 				673C396188FD3423FC81B601 /* SeedData.swift in Sources */,
 				36AD933C411953D84E24A087 /* SettingsView.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5F /* SourcesView.swift in Sources */,
 				06FEE5B7496FBB98B1639482 /* SimulatedHeartRateProvider.swift in Sources */,
 				48815BFF859738C6DD045CE7 /* Theme.swift in Sources */,
 				7E05394187BFADCD52E8A010 /* TrendsView.swift in Sources */,
@@ -358,6 +369,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				26CA635859FD74F215DEAEEE /* BreathingPatternTests.swift in Sources */,
+				A1B2C3D4E5F60718293A4B61 /* HealthContentTests.swift in Sources */,
 				808FB1FD59F7135CD33E1BFF /* EpisodeInsightsTests.swift in Sources */,
 				117B071A4895ED7A0D3AF859 /* SVTEpisodeTaggingTests.swift in Sources */,
 				5E6964C5F818FD4FFF076B0F /* EpisodeDetectorTests.swift in Sources */,

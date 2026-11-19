@@ -114,6 +114,7 @@ struct EpisodeListView: View {
             Image(systemName: "heart.text.square")
                 .font(.system(size: 44, weight: .light))
                 .foregroundStyle(Theme.inkSecondary)
+                .accessibilityHidden(true)
             Text("No episodes recorded")
                 .font(Theme.font(22, .bold))
                 .foregroundStyle(Theme.ink)
@@ -146,9 +147,15 @@ struct EpisodeListView: View {
 /// line of text rather than chips, so a long history stays scannable.
 private struct EpisodeRow: View {
     let episode: SVTEpisode
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
+        // At accessibility text sizes the peak moves under the date instead of
+        // squeezing it into a sliver.
+        let layout = typeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 6))
+            : AnyLayout(HStackLayout(alignment: .center, spacing: 12))
+        layout {
             VStack(alignment: .leading, spacing: 3) {
                 Text(episode.startDate.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))
                     .font(Theme.font(17, .semibold))
@@ -160,11 +167,11 @@ private struct EpisodeRow: View {
                     Text(tagTitles.joined(separator: ", "))
                         .font(Theme.font(13))
                         .foregroundStyle(Theme.inkSecondary)
-                        .lineLimit(1)
+                        .lineLimit(typeSize.isAccessibilitySize ? nil : 1)
                 }
             }
 
-            Spacer(minLength: 8)
+            if !typeSize.isAccessibilitySize { Spacer(minLength: 8) }
 
             if episode.peakBPM > 0 {
                 PeakChip(peakBPM: Int(episode.peakBPM.rounded()))

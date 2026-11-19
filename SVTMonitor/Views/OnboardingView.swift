@@ -54,7 +54,7 @@ struct OnboardingView: View {
             icon: "waveform.path.ecg",
             iconTint: Theme.alert,
             title: "How detection works",
-            body: "You set an alert threshold (default 150 BPM). When your heart rate stays at or above it — or jumps suddenly, the way SVT often begins — the app records an episode with its start time, duration, and peak BPM."
+            body: "SVT usually means a heart rate of about 150 to 220 that starts and stops suddenly. So the app records an episode when your rate stays at or above your alert level (150 to start), or jumps suddenly. Your Apple Watch measures heart rate now and then through the day, not continuously, so short episodes can be missed. Log those by hand."
         )
     }
 
@@ -74,6 +74,7 @@ struct OnboardingView: View {
                     .font(.system(size: 56))
                     .foregroundStyle(Theme.accentSoft)
                     .padding(.top, 20)
+                    .accessibilityHidden(true)
 
                 Text("A couple of permissions")
                     .font(Theme.font(26, .bold))
@@ -135,8 +136,10 @@ struct OnboardingView: View {
                 .font(.system(size: 44, weight: .regular))
                 .foregroundStyle(iconTint)
                 .padding(.bottom, 8)
+                .accessibilityHidden(true)
             Text(title)
                 .font(Theme.font(34, .bold))
+                .accessibilityAddTraits(.isHeader)
                 .foregroundStyle(Theme.ink)
                 .fixedSize(horizontal: false, vertical: true)
             Text(body)
@@ -156,6 +159,7 @@ struct OnboardingView: View {
                 .font(.system(size: 20))
                 .foregroundStyle(Theme.accent)
                 .frame(width: 34)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(Theme.font(15, .semibold))
@@ -187,6 +191,8 @@ struct OnboardingView: View {
                     .animation(.easeInOut, value: page)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Page \(page + 1) of \(lastPage + 1)")
     }
 
     private var controls: some View {

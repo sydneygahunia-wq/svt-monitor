@@ -36,6 +36,22 @@ struct MetricView: View {
                 .foregroundStyle(tint)
         }
         .frame(maxWidth: .infinity, alignment: alignment == .leading ? .leading : .center)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// A row that becomes a column at accessibility text sizes, so three metrics
+/// side by side don't get squeezed into truncated "1m 1…" fragments.
+struct AdaptiveStack<Content: View>: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
+    var spacing: CGFloat = 12
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        let layout = typeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: spacing))
+            : AnyLayout(HStackLayout(alignment: .top, spacing: spacing))
+        layout { content }
     }
 }
 
@@ -67,12 +83,13 @@ struct PrimaryButtonLabel: View {
         HStack(spacing: 8) {
             Image(systemName: systemImage)
                 .font(.system(size: 16, weight: .semibold))
+                .accessibilityHidden(true)
             Text(title)
                 .font(Theme.font(17, .semibold))
         }
-        .foregroundStyle(.white)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 15)
+        .foregroundStyle(Theme.onFill)
+        .frame(maxWidth: .infinity, minHeight: 50)
+        .padding(.vertical, 4)
         .background(
             RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous)
                 .fill(tint)
@@ -87,6 +104,8 @@ struct SectionHeader: View {
         Text(title)
             .font(Theme.font(17, .semibold))
             .foregroundStyle(Theme.ink)
+            // Lets VoiceOver users jump between sections with the rotor.
+            .accessibilityAddTraits(.isHeader)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
