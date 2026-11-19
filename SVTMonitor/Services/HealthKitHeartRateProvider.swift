@@ -18,6 +18,7 @@ final class HealthKitHeartRateProvider: HeartRateProvider {
     var samples: AnyPublisher<HeartRateSample, Never> { subject.eraseToAnyPublisher() }
 
     private var anchoredQuery: HKAnchoredObjectQuery?
+    private var wantsStreaming = false
     private var anchor: HKQueryAnchor?
     private let bpmUnit = HKUnit.count().unitDivided(by: .minute())
 
@@ -41,10 +42,18 @@ final class HealthKitHeartRateProvider: HeartRateProvider {
 
     // MARK: Authorization
 
-    /// Authorization status for heart-rate reads.
-    func authorizationStatus() -> HKAuthorizationStatus {
-        guard let heartRateType else { return .notDetermined }
-        return store.authorizationStatus(for: heartRateType)
+    /// Whether the permission sheet has been shown yet. HealthKit never tells
+    /// an app whether *read* access was granted (that would leak whether data
+    /// exists), so "already asked" is the most it can report. Completion is
+    /// delivered on the main queue.
+    func requestStatus(_ completion: @escaping (HKAuthorizationRequestStatus) -> Void) {
+        guard HKHealthStore.isHealthDataAvailable() else {
+            completion(.unknown)
+            return
+        }
+        store.getRequestStatusForAuthorization(toShare: [], read: readTypes) { status, _ in
+            DispatchQueue.main.async { completion(status) }
+        }
     }
 
     /// Request read access. Completion is delivered on the main queue.
@@ -62,11 +71,21 @@ final class HealthKitHeartRateProvider: HeartRateProvider {
 
     func startStreaming() {
         guard HKHealthStore.isHealthDataAvailable(), let heartRateType else { return }
-        bootstrapMostRecent(type: heartRateType)
-        startAnchoredQuery(type: heartRateType)
+        guard !wantsStreaming else { return }
+        wantsStreaming = true
+        // Queries run before authorization fail once and never retry, so ask
+        // first. If the user has already answered, this returns immediately
+        // without showing the sheet again.
+        requestAuthorization { [weak self] _, _ in
+            // Monitoring may have been stopped while the sheet was up.
+            guard let self, self.wantsStreaming, self.anchoredQuery == nil else { return }
+            self.bootstrapMostRecent(type: heartRateType)
+            self.startAnchoredQuery(type: heartRateType)
+        }
     }
 
     func stopStreaming() {
+        wantsStreaming = false
         if let query = anchoredQuery {
             store.stop(query)
             anchoredQuery = nil

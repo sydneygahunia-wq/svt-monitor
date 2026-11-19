@@ -9,7 +9,7 @@ struct SettingsView: View {
     @ObservedObject private var notifications = NotificationManager.shared
 
     @State private var hkProvider = HealthKitHeartRateProvider()
-    @State private var hkStatus: HKAuthorizationStatus = .notDetermined
+    @State private var hkStatus: HKAuthorizationRequestStatus = .unknown
 
     var body: some View {
         NavigationStack {
@@ -28,7 +28,7 @@ struct SettingsView: View {
             .appBackground()
             .navigationTitle("Settings")
             .onAppear {
-                hkStatus = hkProvider.authorizationStatus()
+                hkProvider.requestStatus { hkStatus = $0 }
                 notifications.refreshStatus()
             }
         }
@@ -110,7 +110,7 @@ struct SettingsView: View {
                         Spacer()
                         Button("Request") {
                             hkProvider.requestAuthorization { _, _ in
-                                hkStatus = hkProvider.authorizationStatus()
+                                hkProvider.requestStatus { hkStatus = $0 }
                             }
                         }
                         .font(Theme.rounded(14, .semibold))
@@ -129,16 +129,18 @@ struct SettingsView: View {
         }
     }
 
-    private var healthKitAuthorized: Bool { hkStatus == .sharingAuthorized }
+    private var healthKitAuthorized: Bool { hkStatus == .unnecessary }
 
     private var hkStatusText: String {
         guard HealthKitHeartRateProvider.isHealthDataAvailable else {
             return "Health data isn't available on this device"
         }
+        // Apple doesn't let apps see whether read access was allowed, only
+        // whether the user has been asked.
         switch hkStatus {
-        case .notDetermined: return "Not requested yet"
-        case .sharingDenied: return "Read access not granted"
-        case .sharingAuthorized: return "Authorized"
+        case .shouldRequest: return "Not requested yet"
+        case .unnecessary: return "Requested — manage in Health › Sharing › Apps"
+        case .unknown: return "Unknown"
         @unknown default: return "Unknown"
         }
     }
