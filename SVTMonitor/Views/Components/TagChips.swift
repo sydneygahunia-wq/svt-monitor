@@ -5,19 +5,19 @@ import SwiftUI
 struct TagChip: View {
     let title: String
     let systemImage: String
-    var tint: Color = Theme.blueDeep
+    var tint: Color = Theme.accent
 
     var body: some View {
         HStack(spacing: 5) {
             Image(systemName: systemImage)
                 .font(.system(size: 11, weight: .semibold))
             Text(title)
-                .font(Theme.rounded(13, .semibold))
+                .font(Theme.font(13, .semibold))
         }
         .foregroundStyle(tint)
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(Capsule().fill(tint.opacity(0.14)))
+        .background(Capsule().fill(tint.opacity(0.10)))
     }
 }
 
@@ -26,7 +26,7 @@ struct SelectableChip: View {
     let title: String
     let systemImage: String
     let isSelected: Bool
-    var tint: Color = Theme.blueDeep
+    var tint: Color = Theme.accent
     let action: () -> Void
 
     var body: some View {
@@ -35,7 +35,7 @@ struct SelectableChip: View {
                 Image(systemName: systemImage)
                     .font(.system(size: 12, weight: .semibold))
                 Text(title)
-                    .font(Theme.rounded(15, .semibold))
+                    .font(Theme.font(15, .semibold))
             }
             .foregroundStyle(isSelected ? .white : Theme.ink)
             .padding(.horizontal, 14)
@@ -115,7 +115,7 @@ struct SymptomPicker: View {
                     title: symptom.title,
                     systemImage: symptom.systemImage,
                     isSelected: selection.contains(symptom),
-                    tint: Theme.peachDeep
+                    tint: Theme.alert
                 ) {
                     toggle(symptom)
                 }
@@ -171,13 +171,13 @@ struct SeverityPicker: View {
                         severity = (severity == value) ? 0 : value
                     } label: {
                         Text("\(value)")
-                            .font(Theme.rounded(17, .bold))
+                            .font(Theme.font(17, .bold))
                             .foregroundStyle(severity >= value && severity > 0 ? .white : Theme.inkSecondary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                             .background(
                                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(severity >= value && severity > 0 ? Theme.peachDeep : Theme.background)
+                                    .fill(severity >= value && severity > 0 ? Theme.alert : Theme.background)
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -189,7 +189,7 @@ struct SeverityPicker: View {
             }
 
             Text(SVTEpisode.severityLabel(severity) ?? "Tap to rate how it felt")
-                .font(Theme.rounded(14))
+                .font(Theme.font(14))
                 .foregroundStyle(Theme.inkSecondary)
         }
     }

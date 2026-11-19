@@ -43,7 +43,7 @@ struct OnboardingView: View {
     private var welcome: some View {
         pageLayout(
             icon: "heart.text.square.fill",
-            iconTint: Theme.blue,
+            iconTint: Theme.accent,
             title: "Welcome to SVT Monitor",
             body: "A calm, private place to keep an eye on your heart. SVT Monitor watches your heart rate and records possible SVT episodes so you have a clear history to share with your care team."
         )
@@ -52,7 +52,7 @@ struct OnboardingView: View {
     private var howItWorks: some View {
         pageLayout(
             icon: "waveform.path.ecg",
-            iconTint: Theme.peachDeep,
+            iconTint: Theme.alert,
             title: "How detection works",
             body: "You set an alert threshold (default 150 BPM). When your heart rate stays at or above it — or jumps suddenly, the way SVT often begins — the app records an episode with its start time, duration, and peak BPM."
         )
@@ -61,7 +61,7 @@ struct OnboardingView: View {
     private var duringAnEpisode: some View {
         pageLayout(
             icon: "wind",
-            iconTint: Theme.blueDeep,
+            iconTint: Theme.calm,
             title: "For the moment itself",
             body: "When an episode starts, calm mode opens with a breathing guide to follow — plus reminders of any maneuvers your own care team has taught you. Afterwards you can tag what you felt and what might have set it off, so patterns show up over time instead of getting lost."
         )
@@ -72,11 +72,11 @@ struct OnboardingView: View {
             VStack(spacing: 20) {
                 Image(systemName: "checkmark.shield.fill")
                     .font(.system(size: 56))
-                    .foregroundStyle(Theme.blue)
+                    .foregroundStyle(Theme.accentSoft)
                     .padding(.top, 20)
 
                 Text("A couple of permissions")
-                    .font(Theme.rounded(26, .bold))
+                    .font(Theme.font(26, .bold))
                     .foregroundStyle(Theme.ink)
                     .multilineTextAlignment(.center)
 
@@ -114,74 +114,66 @@ struct OnboardingView: View {
     private var disclaimer: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Important")
-                .font(Theme.rounded(14, .bold))
-                .foregroundStyle(Theme.peachDeep)
+                .font(Theme.font(15, .semibold))
+                .foregroundStyle(Theme.ink)
             Text("SVT Monitor is a personal tracking tool, not a medical device. It does not diagnose, treat, or prevent any condition. Always consult your care team about symptoms.")
-                .font(Theme.rounded(13))
+                .font(Theme.font(13))
                 .foregroundStyle(Theme.inkSecondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Theme.peach.opacity(0.14))
-        )
     }
 
     // MARK: Reusable page layout
 
     private func pageLayout(icon: String, iconTint: Color, title: String, body: String) -> some View {
-        VStack(spacing: 24) {
+        // Left-aligned, like Apple's own setup screens: reads as a page of a
+        // product rather than a centered splash.
+        VStack(alignment: .leading, spacing: 16) {
             Spacer()
-            ZStack {
-                Circle()
-                    .fill(iconTint.opacity(0.15))
-                    .frame(width: 150, height: 150)
-                Image(systemName: icon)
-                    .font(.system(size: 66))
-                    .foregroundStyle(iconTint)
-            }
+            Image(systemName: icon)
+                .font(.system(size: 44, weight: .regular))
+                .foregroundStyle(iconTint)
+                .padding(.bottom, 8)
             Text(title)
-                .font(Theme.rounded(28, .bold))
+                .font(Theme.font(34, .bold))
                 .foregroundStyle(Theme.ink)
-                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
             Text(body)
-                .font(Theme.rounded(16))
+                .font(Theme.font(17))
                 .foregroundStyle(Theme.inkSecondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                .fixedSize(horizontal: false, vertical: true)
             Spacer()
             Spacer()
         }
-        .padding(.horizontal, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 28)
     }
 
     private func permissionRow(icon: String, title: String, subtitle: String, buttonTitle: String, enabled: Bool, action: @escaping () -> Void) -> some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
                 .font(.system(size: 20))
-                .foregroundStyle(Theme.blueDeep)
+                .foregroundStyle(Theme.accent)
                 .frame(width: 34)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(Theme.rounded(15, .semibold))
+                    .font(Theme.font(15, .semibold))
                     .foregroundStyle(Theme.ink)
                 Text(subtitle)
-                    .font(Theme.rounded(12))
+                    .font(Theme.font(12))
                     .foregroundStyle(Theme.inkSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer()
             Button(buttonTitle, action: action)
-                .font(Theme.rounded(14, .semibold))
-                .foregroundStyle(enabled ? Theme.blueDeep : Theme.inkSecondary)
+                .font(Theme.font(14, .semibold))
+                .foregroundStyle(enabled ? Theme.accent : Theme.inkSecondary)
                 .disabled(!enabled)
         }
         .padding(14)
         .background(Theme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .shadow(color: Theme.cardShadow, radius: 8, y: 3)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
     }
 
     // MARK: Controls
@@ -189,9 +181,9 @@ struct OnboardingView: View {
     private var pageDots: some View {
         HStack(spacing: 8) {
             ForEach(0...lastPage, id: \.self) { i in
-                Capsule()
-                    .fill(i == page ? Theme.blueDeep : Theme.hairline)
-                    .frame(width: i == page ? 22 : 8, height: 8)
+                Circle()
+                    .fill(i == page ? Theme.ink : Theme.hairline)
+                    .frame(width: 7, height: 7)
                     .animation(.easeInOut, value: page)
             }
         }

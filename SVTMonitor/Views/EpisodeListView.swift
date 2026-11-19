@@ -40,7 +40,7 @@ struct EpisodeListView: View {
                     Button {
                         sheet = .log
                     } label: {
-                        Label("Log episode", systemImage: "plus.circle.fill")
+                        Label("Log episode", systemImage: "plus")
                     }
                 }
             }
@@ -59,66 +59,66 @@ struct EpisodeListView: View {
     }
 
     private var list: some View {
-        ScrollView {
-            LazyVStack(spacing: 12) {
+        List {
+            Section {
+            } header: {
                 summaryHeader
-                ForEach(episodes) { episode in
-                    NavigationLink {
-                        EpisodeDetailView(episode: episode)
-                    } label: {
-                        EpisodeRow(episode: episode)
-                    }
-                    .buttonStyle(.plain)
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            delete(episode)
+            }
+            ForEach(groupedByMonth, id: \.month) { group in
+                Section {
+                    ForEach(group.episodes) { episode in
+                        NavigationLink {
+                            EpisodeDetailView(episode: episode)
                         } label: {
-                            Label("Delete episode", systemImage: "trash")
+                            EpisodeRow(episode: episode)
                         }
                     }
+                    .onDelete { offsets in
+                        offsets.map { group.episodes[$0] }.forEach(delete)
+                    }
+                } header: {
+                    Text(group.month.formatted(.dateTime.month(.wide).year()))
+                        .font(Theme.font(20, .bold))
+                        .foregroundStyle(Theme.ink)
+                        .textCase(nil)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
         }
-        .scrollIndicators(.hidden)
+        .listStyle(.insetGrouped)
     }
 
+    /// Sections like Health's history lists: one per month, newest first.
+    private var groupedByMonth: [(month: Date, episodes: [SVTEpisode])] {
+        let calendar = Calendar.current
+        let groups = Dictionary(grouping: episodes) { episode in
+            calendar.dateInterval(of: .month, for: episode.startDate)?.start ?? episode.startDate
+        }
+        return groups
+            .map { (month: $0.key, episodes: $0.value) }
+            .sorted { $0.month > $1.month }
+    }
+
+    /// One plain sentence instead of stat tiles.
     private var summaryHeader: some View {
-        HStack(spacing: 12) {
-            summaryTile(value: "\(episodes.count)", label: "Recorded")
-            summaryTile(value: "\(Int(episodes.map(\.peakBPM).max() ?? 0))", label: "Highest peak")
-        }
-        .padding(.bottom, 4)
-    }
-
-    private func summaryTile(value: String, label: String) -> some View {
-        VStack(spacing: 4) {
-            Text(value)
-                .font(Theme.rounded(26, .bold))
-                .foregroundStyle(Theme.ink)
-            Text(label.uppercased())
-                .font(Theme.rounded(11, .semibold))
-                .tracking(0.5)
-                .foregroundStyle(Theme.inkSecondary)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
-        .background(Theme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .shadow(color: Theme.cardShadow, radius: 10, y: 4)
+        let count = episodes.count
+        let peak = Int(episodes.map(\.peakBPM).max() ?? 0)
+        return Text("\(count) episode\(count == 1 ? "" : "s") recorded\(peak > 0 ? ", highest \(peak) bpm" : "")")
+            .font(Theme.font(15))
+            .foregroundStyle(Theme.inkSecondary)
+            .textCase(nil)
+            .padding(.bottom, 4)
     }
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            Image(systemName: "checkmark.seal.fill")
-                .font(.system(size: 54))
-                .foregroundStyle(Theme.blue)
+            Image(systemName: "heart.text.square")
+                .font(.system(size: 44, weight: .light))
+                .foregroundStyle(Theme.inkSecondary)
             Text("No episodes recorded")
-                .font(Theme.rounded(22, .bold))
+                .font(Theme.font(22, .bold))
                 .foregroundStyle(Theme.ink)
             Text("That's a good thing. Detected episodes appear here — and if one happens while you aren't wearing your watch, you can write it down yourself.")
-                .font(Theme.rounded(15))
+                .font(Theme.font(15))
                 .foregroundStyle(Theme.inkSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -142,77 +142,47 @@ struct EpisodeListView: View {
     }
 }
 
-/// One row in the episode list.
+/// One row in the episode list: when, how long, how fast. Tags are a quiet
+/// line of text rather than chips, so a long history stays scannable.
 private struct EpisodeRow: View {
     let episode: SVTEpisode
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            header
-            if !tagTitles.isEmpty {
-                FlowLayout(spacing: 6, lineSpacing: 6) {
-                    ForEach(episode.symptoms) { symptom in
-                        TagChip(title: symptom.title, systemImage: symptom.systemImage, tint: Theme.peachDeep)
-                    }
-                    ForEach(episode.triggers) { trigger in
-                        TagChip(title: trigger.title, systemImage: trigger.systemImage)
-                    }
-                }
-            }
-        }
-        .padding(14)
-        .background(Theme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .shadow(color: Theme.cardShadow, radius: 10, y: 4)
-    }
-
-    private var tagTitles: [String] {
-        episode.symptoms.map(\.title) + episode.triggers.map(\.title)
-    }
-
-    private var header: some View {
-        HStack(spacing: 14) {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Theme.peach.opacity(0.25))
-                .frame(width: 46, height: 46)
-                .overlay(
-                    Image(systemName: "waveform.path.ecg")
-                        .font(.system(size: 20, weight: .semibold))
-                        .foregroundStyle(Theme.peachDeep)
-                )
-
+        HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 3) {
-                Text(episode.startDate.formatted(date: .abbreviated, time: .shortened))
-                    .font(Theme.rounded(16, .semibold))
+                Text(episode.startDate.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))
+                    .font(Theme.font(17, .semibold))
                     .foregroundStyle(Theme.ink)
-                HStack(spacing: 6) {
-                    Image(systemName: "clock")
-                        .font(.system(size: 11, weight: .semibold))
-                    Text(episode.durationText)
-                        .font(Theme.rounded(13, .medium))
-                    if episode.isManualEntry {
-                        Image(systemName: "square.and.pencil")
-                            .font(.system(size: 11, weight: .semibold))
-                    }
-                    if episode.isOngoing {
-                        Text("• ongoing")
-                            .font(Theme.rounded(13, .semibold))
-                            .foregroundStyle(Theme.peachDeep)
-                    }
+                Text(metaLine)
+                    .font(Theme.font(15))
+                    .foregroundStyle(episode.isOngoing ? Theme.alert : Theme.inkSecondary)
+                if !tagTitles.isEmpty {
+                    Text(tagTitles.joined(separator: ", "))
+                        .font(Theme.font(13))
+                        .foregroundStyle(Theme.inkSecondary)
+                        .lineLimit(1)
                 }
-                .foregroundStyle(Theme.inkSecondary)
             }
 
-            Spacer()
+            Spacer(minLength: 8)
 
             if episode.peakBPM > 0 {
                 PeakChip(peakBPM: Int(episode.peakBPM.rounded()))
             }
-
-            Image(systemName: "chevron.right")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Theme.hairline)
         }
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var metaLine: String {
+        var parts = [episode.startDate.formatted(date: .omitted, time: .shortened), episode.durationText]
+        if episode.isManualEntry { parts.append("logged by hand") }
+        if episode.isOngoing { parts.append("ongoing") }
+        return parts.joined(separator: " · ")
+    }
+
+    private var tagTitles: [String] {
+        episode.symptoms.map(\.title) + episode.triggers.map(\.title)
     }
 }
 

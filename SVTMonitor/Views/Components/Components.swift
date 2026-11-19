@@ -1,23 +1,20 @@
 import SwiftUI
 import UIKit
 
-/// Status capsule shown on the dashboard (MONITORING / POSSIBLE EPISODE / …).
+/// A dot and a word, the way the Watch shows workout state. No capsule: the
+/// color and the wording carry it.
 struct StatusPill: View {
     let status: MonitorStatus
 
     var body: some View {
-        HStack(spacing: 7) {
+        HStack(spacing: 6) {
             Circle()
                 .fill(status.tint)
-                .frame(width: 8, height: 8)
+                .frame(width: 7, height: 7)
             Text(status.label)
-                .font(Theme.rounded(13, .bold))
-                .tracking(0.6)
+                .font(Theme.font(15, .semibold))
                 .foregroundStyle(status.tint)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .background(Capsule().fill(status.fill))
         .animation(.easeInOut(duration: 0.3), value: status)
     }
 }
@@ -31,36 +28,32 @@ struct MetricView: View {
 
     var body: some View {
         VStack(alignment: alignment, spacing: 3) {
-            Text(value)
-                .font(Theme.rounded(22, .bold))
-                .foregroundStyle(tint)
-            Text(label.uppercased())
-                .font(Theme.rounded(11, .semibold))
-                .tracking(0.5)
+            Text(label)
+                .font(Theme.font(13))
                 .foregroundStyle(Theme.inkSecondary)
+            Text(value)
+                .font(Theme.number(22))
+                .foregroundStyle(tint)
         }
         .frame(maxWidth: .infinity, alignment: alignment == .leading ? .leading : .center)
     }
 }
 
-/// A compact peak-BPM chip used in episode rows.
+/// Peak rate in an episode row: the number large, the unit small, like Health.
 struct PeakChip: View {
     let peakBPM: Int
 
     var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: "arrow.up.heart.fill")
-                .font(.system(size: 11, weight: .bold))
+        HStack(alignment: .firstTextBaseline, spacing: 3) {
             Text("\(peakBPM)")
-                .font(Theme.rounded(14, .bold))
-            Text("BPM")
-                .font(Theme.rounded(10, .semibold))
-                .opacity(0.8)
+                .font(Theme.number(20))
+                .foregroundStyle(Theme.ink)
+            Text("bpm")
+                .font(Theme.font(13, .medium))
+                .foregroundStyle(Theme.inkSecondary)
         }
-        .foregroundStyle(Theme.peachDeep)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(Capsule().fill(Theme.peach.opacity(0.28)))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Peak \(peakBPM) beats per minute")
     }
 }
 
@@ -68,23 +61,22 @@ struct PeakChip: View {
 struct PrimaryButtonLabel: View {
     let title: String
     let systemImage: String
-    var tint: Color = Theme.blueDeep
+    var tint: Color = Theme.accent
 
     var body: some View {
-        HStack(spacing: 9) {
+        HStack(spacing: 8) {
             Image(systemName: systemImage)
-                .font(.system(size: 17, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold))
             Text(title)
-                .font(Theme.rounded(18, .semibold))
+                .font(Theme.font(17, .semibold))
         }
         .foregroundStyle(.white)
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, 15)
         .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
+            RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous)
                 .fill(tint)
         )
-        .shadow(color: tint.opacity(0.35), radius: 12, y: 6)
     }
 }
 
@@ -92,10 +84,9 @@ struct PrimaryButtonLabel: View {
 struct SectionHeader: View {
     let title: String
     var body: some View {
-        Text(title.uppercased())
-            .font(Theme.rounded(12, .bold))
-            .tracking(0.8)
-            .foregroundStyle(Theme.inkSecondary)
+        Text(title)
+            .font(Theme.font(17, .semibold))
+            .foregroundStyle(Theme.ink)
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

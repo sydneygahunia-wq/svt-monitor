@@ -39,10 +39,9 @@ struct TrendsView: View {
                         shareCard
                     }
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 16)
                 .padding(.vertical, 12)
             }
-            .scrollIndicators(.hidden)
             .appBackground()
             .navigationTitle("Trends")
             .sheet(isPresented: $isSharingSummary) {
@@ -69,7 +68,7 @@ struct TrendsView: View {
 
                 if insights.taggedCount == 0 {
                     Text("Tag symptoms and possible triggers on an episode and they'll be counted here.")
-                        .font(Theme.rounded(14))
+                        .font(Theme.font(14))
                         .foregroundStyle(Theme.inkSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 } else {
@@ -79,7 +78,7 @@ struct TrendsView: View {
                             rows: insights.topSymptoms.prefix(4).map {
                                 ($0.tag.title, $0.tag.systemImage, $0.count, $0.share)
                             },
-                            tint: Theme.peachDeep
+                            tint: Theme.alert
                         )
                     }
 
@@ -89,12 +88,12 @@ struct TrendsView: View {
                             rows: insights.topTriggers.prefix(4).map {
                                 ($0.tag.title, $0.tag.systemImage, $0.count, $0.share)
                             },
-                            tint: Theme.blueDeep
+                            tint: Theme.accent
                         )
                     }
 
                     Text("These are counts of what you tagged, not causes. Worth raising with your care team, not acting on alone.")
-                        .font(Theme.rounded(12))
+                        .font(Theme.font(12))
                         .foregroundStyle(Theme.inkSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -109,7 +108,7 @@ struct TrendsView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
-                .font(Theme.rounded(14, .semibold))
+                .font(Theme.font(14, .semibold))
                 .foregroundStyle(Theme.ink)
 
             ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
@@ -120,23 +119,23 @@ struct TrendsView: View {
                         .frame(width: 20)
 
                     Text(row.0)
-                        .font(Theme.rounded(14))
+                        .font(Theme.font(14))
                         .foregroundStyle(Theme.ink)
                         .frame(width: 130, alignment: .leading)
 
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
-                            Capsule()
-                                .fill(Theme.background)
-                            Capsule()
-                                .fill(tint.opacity(0.75))
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color(uiColor: .tertiarySystemFill))
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(tint)
                                 .frame(width: max(6, geo.size.width * row.3))
                         }
                     }
-                    .frame(height: 10)
+                    .frame(height: 8)
 
                     Text("\(row.2)")
-                        .font(Theme.rounded(13, .semibold))
+                        .font(Theme.number(13))
                         .foregroundStyle(Theme.inkSecondary)
                         .frame(width: 24, alignment: .trailing)
                 }
@@ -151,22 +150,16 @@ struct TrendsView: View {
             VStack(alignment: .leading, spacing: 12) {
                 SectionHeader(title: "For your appointment")
                 Text("Export a plain summary of this range — counts, durations, peaks and what you tagged — to hand to your cardiologist.")
-                    .font(Theme.rounded(14))
+                    .font(Theme.font(14))
                     .foregroundStyle(Theme.inkSecondary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Button {
                     isSharingSummary = true
                 } label: {
-                    HStack(spacing: 8) {
-                        Image(systemName: "square.and.arrow.up")
-                        Text("Share summary")
-                            .font(Theme.rounded(15, .semibold))
-                    }
-                    .foregroundStyle(Theme.blueDeep)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 11)
-                    .background(Capsule().fill(Theme.blue.opacity(0.2)))
+                    Label("Share summary", systemImage: "square.and.arrow.up")
+                        .font(Theme.font(17))
+                        .foregroundStyle(Theme.accent)
                 }
                 .buttonStyle(.plain)
             }
@@ -212,9 +205,9 @@ struct TrendsView: View {
     private var overviewCard: some View {
         Card {
             HStack(spacing: 12) {
-                MetricView(value: "\(filtered.count)", label: "Episodes", tint: Theme.ink, alignment: .center)
-                MetricView(value: "\(Int(filtered.map(\.peakBPM).max() ?? 0))", label: "Peak BPM", tint: Theme.peachDeep, alignment: .center)
-                MetricView(value: avgDurationText, label: "Avg length", tint: Theme.blueDeep, alignment: .center)
+                MetricView(value: "\(filtered.count)", label: "Episodes")
+                MetricView(value: "\(Int(filtered.map(\.peakBPM).max() ?? 0)) bpm", label: "Highest peak")
+                MetricView(value: avgDurationText, label: "Typical length")
             }
         }
     }
@@ -233,16 +226,13 @@ struct TrendsView: View {
                     BarMark(
                         x: .value("Week", bucket.weekStart, unit: .weekOfYear),
                         y: .value("Episodes", bucket.count),
-                        width: .fixed(18)
+                        width: .ratio(0.35)
                     )
-                    .cornerRadius(6)
-                    .foregroundStyle(
-                        LinearGradient(colors: [Theme.blue, Theme.blueDeep],
-                                       startPoint: .top, endPoint: .bottom)
-                    )
+                    .cornerRadius(3)
+                    .foregroundStyle(Theme.accent)
                 }
                 .chartYAxis {
-                    AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { _ in
+                    AxisMarks(position: .trailing, values: .automatic(desiredCount: 4)) { _ in
                         AxisGridLine().foregroundStyle(Theme.hairline)
                         AxisValueLabel()
                     }
@@ -260,23 +250,23 @@ struct TrendsView: View {
     private var peakCard: some View {
         Card {
             VStack(alignment: .leading, spacing: 12) {
-                SectionHeader(title: "Peak BPM over time")
+                SectionHeader(title: "Peak heart rate")
                 Chart(filtered) { episode in
                     PointMark(
                         x: .value("Date", episode.startDate),
                         y: .value("Peak BPM", episode.peakBPM)
                     )
-                    .foregroundStyle(Theme.peachDeep)
-                    .symbolSize(90)
+                    .foregroundStyle(Theme.alert)
+                    .symbolSize(50)
                 }
                 .chartYScale(domain: peakDomain)
                 .chartYAxis {
-                    AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { value in
+                    AxisMarks(position: .trailing, values: .automatic(desiredCount: 4)) { value in
                         AxisGridLine().foregroundStyle(Theme.hairline)
                         AxisValueLabel {
                             if let v = value.as(Double.self) {
                                 Text("\(Int(v))")
-                                    .font(Theme.rounded(10))
+                                    .font(Theme.font(10))
                                     .foregroundStyle(Theme.inkSecondary)
                             }
                         }
@@ -302,13 +292,13 @@ struct TrendsView: View {
     private var emptyState: some View {
         VStack(spacing: 14) {
             Image(systemName: "chart.xyaxis.line")
-                .font(.system(size: 46))
-                .foregroundStyle(Theme.blue)
+                .font(.system(size: 40, weight: .light))
+                .foregroundStyle(Theme.inkSecondary)
             Text("No episodes in this range")
-                .font(Theme.rounded(19, .bold))
+                .font(Theme.font(19, .bold))
                 .foregroundStyle(Theme.ink)
             Text("Trends will appear once episodes are recorded in the selected window.")
-                .font(Theme.rounded(14))
+                .font(Theme.font(14))
                 .foregroundStyle(Theme.inkSecondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 30)

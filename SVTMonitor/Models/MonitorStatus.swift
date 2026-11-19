@@ -11,25 +11,17 @@ enum MonitorStatus: Equatable {
 
     var label: String {
         switch self {
-        case .idle: return "NOT MONITORING"
-        case .monitoring: return "MONITORING"
-        case .episode: return "POSSIBLE EPISODE"
+        case .idle: return "Not monitoring"
+        case .monitoring: return "Monitoring"
+        case .episode: return "Possible episode"
         }
     }
 
     var tint: Color {
         switch self {
         case .idle: return Theme.inkSecondary
-        case .monitoring: return Theme.blueDeep
-        case .episode: return Theme.peachDeep
-        }
-    }
-
-    var fill: Color {
-        switch self {
-        case .idle: return Theme.hairline
-        case .monitoring: return Theme.blue.opacity(0.22)
-        case .episode: return Theme.peach.opacity(0.35)
+        case .monitoring: return Color(uiColor: .systemGreen)
+        case .episode: return Theme.alert
         }
     }
 }

@@ -34,7 +34,7 @@ struct MainTabView: View {
             SettingsView()
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
         }
-        .tint(Theme.blueDeep)
+        .tint(Theme.accent)
         .onAppear {
             monitor.attach(context: context)
             // Populate demo history the first time we run in demo mode.

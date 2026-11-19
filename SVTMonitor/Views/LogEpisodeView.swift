@@ -55,7 +55,7 @@ struct LogEpisodeView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") { save() }
-                        .font(Theme.rounded(17, .semibold))
+                        .font(Theme.font(17, .semibold))
                         .disabled(!canSave)
                 }
             }
@@ -101,8 +101,8 @@ struct LogEpisodeView: View {
                 }
                 if duration == 0 {
                     Text("Give it at least a few seconds so it can be saved.")
-                        .font(Theme.rounded(13))
-                        .foregroundStyle(Theme.peachDeep)
+                        .font(Theme.font(13))
+                        .foregroundStyle(Theme.alert)
                 }
             }
         }
@@ -114,16 +114,16 @@ struct LogEpisodeView: View {
                 SectionHeader(title: "Heart rate")
                 Toggle(isOn: $knowsPeak) {
                     Text("I know roughly how high it got")
-                        .font(Theme.rounded(15))
+                        .font(Theme.font(15))
                         .foregroundStyle(Theme.ink)
                 }
-                .tint(Theme.blueDeep)
+                .tint(Theme.accent)
 
                 if knowsPeak {
                     HStack(spacing: 10) {
                         TextField("e.g. 180", text: $peakBPMText)
                             .keyboardType(.numberPad)
-                            .font(Theme.rounded(20, .semibold))
+                            .font(Theme.font(20, .semibold))
                             .padding(.horizontal, 14)
                             .padding(.vertical, 12)
                             .background(
@@ -131,12 +131,12 @@ struct LogEpisodeView: View {
                                     .fill(Theme.background)
                             )
                         Text("BPM")
-                            .font(Theme.rounded(16, .semibold))
+                            .font(Theme.font(16, .semibold))
                             .foregroundStyle(Theme.inkSecondary)
                     }
                 } else {
                     Text("That's fine — leave it off and the episode is still recorded.")
-                        .font(Theme.rounded(13))
+                        .font(Theme.font(13))
                         .foregroundStyle(Theme.inkSecondary)
                 }
             }
@@ -175,7 +175,7 @@ struct LogEpisodeView: View {
             VStack(alignment: .leading, spacing: 10) {
                 SectionHeader(title: "Notes")
                 TextEditor(text: $notes)
-                    .font(Theme.rounded(15))
+                    .font(Theme.font(15))
                     .frame(minHeight: 90)
                     .scrollContentBackground(.hidden)
                     .padding(10)

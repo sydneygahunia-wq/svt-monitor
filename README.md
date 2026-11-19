@@ -20,9 +20,9 @@ simulator).
 
 ## Screenshots
 
-| Live Monitor | Episode Log | Onboarding |
+| Live Monitor | Episode Log | Calm Mode |
 |:---:|:---:|:---:|
-| ![Live dashboard with beating heart and threshold sparkline](docs/dashboard.png) | ![Episode history with durations and peak BPM](docs/episodes.png) | ![Onboarding](docs/onboarding.png) |
+| ![Live heart rate with the last 90 seconds charted against the alert line](docs/dashboard.png) | ![Episode history grouped by month with time, duration and peak heart rate](docs/episodes.png) | ![Guided breathing circle with pace options and live heart rate](docs/calm.png) |
 
 ---
 

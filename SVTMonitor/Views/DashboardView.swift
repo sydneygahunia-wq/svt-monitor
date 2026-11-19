@@ -1,8 +1,10 @@
 import SwiftUI
 import Charts
 
-/// The home screen: a big, calm live heart-rate readout with a beating heart,
-/// current status, a rolling sparkline, and monitoring controls.
+/// The home screen. Laid out like the Watch Heart Rate app: the number first
+/// and largest, a plain chart under it, then a short list of things to do.
+/// During an episode the screen reorders itself so the breathing guide is the
+/// first thing under your thumb.
 struct DashboardView: View {
     @EnvironmentObject private var vm: MonitorViewModel
 
@@ -16,26 +18,35 @@ struct DashboardView: View {
 
     @State private var sheet: Sheet?
 
+    private var inEpisode: Bool { vm.status == .episode }
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    heroCard
-                    calmButton
-                    sparklineCard
-                    if vm.isDemoSource { demoCard }
-                    monitorButton
-                    logButton
+                VStack(alignment: .leading, spacing: 28) {
+                    readout
+                    if inEpisode {
+                        breatheNowButton
+                    } else if !vm.isMonitoring {
+                        startButton
+                    }
+                    chartSection
+                    actions
                     footnote
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
+                .padding(.horizontal, 16)
+                .padding(.top, 4)
                 .padding(.bottom, 32)
             }
-            .scrollIndicators(.hidden)
             .appBackground()
-            .navigationTitle("Live Monitor")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle("Monitor")
+            .toolbar {
+                if vm.isMonitoring {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Stop") { vm.toggleMonitoring() }
+                    }
+                }
+            }
             .onAppear {
                 // Demo mode starts streaming immediately so the app is alive
                 // the moment it opens; on-device HealthKit stays opt-in.
@@ -58,144 +69,121 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: Calm mode
+    // MARK: Readout
 
-    /// The most important button on the screen during an episode, so it sits
-    /// directly under the heart rate and is styled to stand out when things are
-    /// actually happening.
-    private var calmButton: some View {
-        Button {
-            sheet = .calm
-        } label: {
-            HStack(spacing: 10) {
-                Image(systemName: "wind")
-                    .font(.system(size: 18, weight: .semibold))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(vm.status == .episode ? "Open calm mode" : "Calm mode")
-                        .font(Theme.rounded(18, .bold))
-                    Text(vm.status == .episode
-                         ? "Breathe through it"
-                         : "Guided breathing, any time")
-                        .font(Theme.rounded(13))
-                        .opacity(0.9)
-                }
-                Spacer(minLength: 0)
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .opacity(0.8)
-            }
-            .foregroundStyle(.white)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(vm.status == .episode ? Theme.peachDeep : Theme.blueDeep)
-            )
-            .shadow(
-                color: (vm.status == .episode ? Theme.peachDeep : Theme.blueDeep).opacity(0.35),
-                radius: 12, y: 6
-            )
-        }
-        .buttonStyle(.plain)
-        .animation(.easeInOut(duration: 0.25), value: vm.status)
-    }
-
-    private var logButton: some View {
-        Button {
-            sheet = .log
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "square.and.pencil")
-                Text("Log an episode by hand")
-                    .font(Theme.rounded(15, .semibold))
-            }
-            .foregroundStyle(Theme.blueDeep)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Theme.hairline, lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
-    }
-
-    // MARK: Hero
-
-    private var heartTint: Color {
-        switch vm.status {
-        case .episode: return Theme.peach
-        case .monitoring: return Theme.blue
-        case .idle: return Theme.blue.opacity(0.45)
-        }
-    }
-
-    private var heroCard: some View {
-        Card(padding: 24) {
-            VStack(spacing: 18) {
+    private var readout: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
                 StatusPill(status: vm.status)
-
-                ZStack {
-                    PulsingHeartView(bpm: displayBPM, tint: heartTint)
-                        .frame(width: 200, height: 200)
-                    VStack(spacing: 0) {
-                        Text(bpmText)
-                            .font(Theme.rounded(66, .heavy))
-                            .foregroundStyle(.white)
-                            .contentTransition(.numericText())
-                            .animation(.snappy, value: vm.currentBPM)
-                        Text("BPM")
-                            .font(Theme.rounded(15, .bold))
-                            .tracking(1)
-                            .foregroundStyle(.white.opacity(0.92))
-                    }
-                    .offset(y: 4)
+                if let updated = updatedText {
+                    Text("· \(updated)")
+                        .font(Theme.font(15))
+                        .foregroundStyle(Theme.inkSecondary)
                 }
-                .frame(height: 210)
-
-                Text(lastUpdatedText)
-                    .font(Theme.rounded(13, .medium))
-                    .foregroundStyle(Theme.inkSecondary)
             }
-            .frame(maxWidth: .infinity)
+
+            // Heart, number, unit on one line, as on the Watch.
+            HStack(alignment: .center, spacing: 10) {
+                PulsingHeartView(bpm: displayBPM, tint: inEpisode ? Theme.alert : Theme.accent)
+                    .frame(width: 30, height: 30)
+                if let bpm = liveBPM {
+                    HStack(alignment: .firstTextBaseline, spacing: 6) {
+                        Text("\(bpm)")
+                            .font(Theme.number(80, .semibold))
+                            .foregroundStyle(inEpisode ? Theme.alert : Theme.ink)
+                            .contentTransition(.numericText())
+                            .animation(.snappy, value: bpm)
+                        Text("bpm")
+                            .font(Theme.font(22, .semibold))
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
+                } else {
+                    // A big placeholder dash reads as a broken bar; words don't.
+                    Text("No reading")
+                        .font(Theme.font(34, .semibold))
+                        .foregroundStyle(Theme.inkSecondary)
+                        .padding(.vertical, 18)
+                }
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(vm.currentBPM.map { "\($0) beats per minute" } ?? "No reading")
+
+            if let detail = detailText {
+                Text(detail)
+                    .font(Theme.font(15))
+                    .foregroundStyle(inEpisode ? Theme.alert : Theme.inkSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// Only pulse to a live rate while actually monitoring.
     private var displayBPM: Int? { vm.isMonitoring ? vm.currentBPM : nil }
 
-    private var bpmText: String {
-        guard vm.isMonitoring, let bpm = vm.currentBPM else { return "--" }
-        return "\(bpm)"
+    private var liveBPM: Int? { vm.isMonitoring ? vm.currentBPM : nil }
+
+    private var updatedText: String? {
+        guard vm.isMonitoring, let date = vm.lastSampleDate else { return nil }
+        return date.formatted(date: .omitted, time: .shortened)
     }
 
-    private var lastUpdatedText: String {
-        guard vm.isMonitoring else { return "Tap Start monitoring to begin" }
-        if vm.status == .episode {
-            return "Possible SVT episode in progress"
+    private var detailText: String? {
+        if inEpisode {
+            let peak = vm.activePeakBPM.map { ", peak \($0) bpm so far" } ?? ""
+            return "Above your \(Int(vm.thresholdBPM)) bpm alert\(peak). This is being recorded."
         }
-        if let date = vm.lastSampleDate {
-            return "Updated \(date.formatted(date: .omitted, time: .standard))"
+        if !vm.isMonitoring {
+            return vm.isDemoSource
+                ? "Demo mode uses a simulated heart rate."
+                : "Reads heart rate from your Apple Watch."
         }
-        return "Waiting for the first reading…"
+        if vm.currentBPM == nil {
+            return "Waiting for your watch to send a reading."
+        }
+        return nil
     }
 
-    // MARK: Sparkline
+    // MARK: Primary actions
 
-    private var sparklineCard: some View {
-        Card {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    SectionHeader(title: "Last 90 seconds")
-                    Spacer()
-                    Text("Threshold \(Int(vm.thresholdBPM)) BPM")
-                        .font(Theme.rounded(11, .semibold))
-                        .foregroundStyle(Theme.peachDeep)
-                }
+    private var breatheNowButton: some View {
+        Button {
+            sheet = .calm
+        } label: {
+            PrimaryButtonLabel(title: "Start breathing", systemImage: "wind", tint: Theme.calm)
+        }
+        .buttonStyle(.plain)
+    }
 
+    private var startButton: some View {
+        Button {
+            vm.toggleMonitoring()
+        } label: {
+            PrimaryButtonLabel(title: "Start monitoring", systemImage: "heart.fill")
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: Chart
+
+    private var chartSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Last 90 seconds")
+                    .font(Theme.font(17, .semibold))
+                    .foregroundStyle(Theme.ink)
+                Spacer()
+                Text("Alert at \(Int(vm.thresholdBPM))")
+                    .font(Theme.font(13))
+                    .foregroundStyle(Theme.inkSecondary)
+            }
+
+            Card {
                 if vm.trace.isEmpty {
-                    placeholderChart
+                    Text(vm.isMonitoring ? "Collecting readings…" : "Nothing to show yet.")
+                        .font(Theme.font(15))
+                        .foregroundStyle(Theme.inkSecondary)
+                        .frame(maxWidth: .infinity, minHeight: 110)
                 } else {
                     liveChart
                 }
@@ -203,50 +191,48 @@ struct DashboardView: View {
         }
     }
 
+    private var lineColor: Color { inEpisode ? Theme.alert : Theme.accent }
+
     private var liveChart: some View {
         Chart {
             ForEach(vm.trace) { point in
+                AreaMark(
+                    x: .value("Time", point.date),
+                    yStart: .value("Floor", chartYDomain.lowerBound),
+                    yEnd: .value("BPM", point.bpm)
+                )
+                .interpolationMethod(.monotone)
+                .foregroundStyle(lineColor.opacity(0.10))
+
                 LineMark(
                     x: .value("Time", point.date),
                     y: .value("BPM", point.bpm)
                 )
-                .interpolationMethod(.catmullRom)
-                .foregroundStyle(vm.status == .episode ? Theme.peachDeep : Theme.blueDeep)
-                .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-
-                AreaMark(
-                    x: .value("Time", point.date),
-                    y: .value("BPM", point.bpm)
-                )
-                .interpolationMethod(.catmullRom)
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [(vm.status == .episode ? Theme.peach : Theme.blue).opacity(0.35), .clear],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
+                .interpolationMethod(.monotone)
+                .foregroundStyle(lineColor)
+                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
             }
 
-            RuleMark(y: .value("Threshold", vm.thresholdBPM))
-                .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                .foregroundStyle(Theme.peach.opacity(0.9))
+            RuleMark(y: .value("Alert", vm.thresholdBPM))
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                .foregroundStyle(Theme.alertSoft)
         }
         .chartYScale(domain: chartYDomain)
         .chartXAxis(.hidden)
         .chartYAxis {
-            AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { value in
-                AxisGridLine().foregroundStyle(Theme.hairline)
+            AxisMarks(position: .trailing, values: .automatic(desiredCount: 3)) { value in
+                AxisGridLine().foregroundStyle(Theme.hairline.opacity(0.6))
                 AxisValueLabel {
                     if let v = value.as(Double.self) {
                         Text("\(Int(v))")
-                            .font(Theme.rounded(10))
+                            .font(Theme.number(11, .regular))
                             .foregroundStyle(Theme.inkSecondary)
                     }
                 }
             }
         }
         .frame(height: 150)
+        .accessibilityLabel("Heart rate over the last 90 seconds")
     }
 
     private var chartYDomain: ClosedRange<Double> {
@@ -256,76 +242,75 @@ struct DashboardView: View {
         return lo...hi
     }
 
-    private var placeholderChart: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Theme.background)
-            Text(vm.isMonitoring ? "Collecting readings…" : "No live data yet")
-                .font(Theme.rounded(14, .medium))
-                .foregroundStyle(Theme.inkSecondary)
-        }
-        .frame(height: 150)
-    }
+    // MARK: Secondary actions
 
-    // MARK: Demo banner
-
-    private var demoCard: some View {
-        Card {
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 8) {
-                    Image(systemName: "wand.and.stars")
-                        .foregroundStyle(Theme.blueDeep)
-                    Text("Demo mode")
-                        .font(Theme.rounded(16, .bold))
-                        .foregroundStyle(Theme.ink)
-                    Spacer()
+    private var actions: some View {
+        VStack(spacing: 0) {
+            if !inEpisode {
+                actionRow(title: "Breathe", subtitle: "Paced breathing, any time", systemImage: "wind", tint: Theme.calm) {
+                    sheet = .calm
                 }
-                Text("Heart-rate data is simulated. Trigger a sample SVT episode to watch detection, alerting, and episode recording work end-to-end.")
-                    .font(Theme.rounded(14))
-                    .foregroundStyle(Theme.inkSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Button {
+                Divider().padding(.leading, 52)
+            }
+            actionRow(title: "Log an episode", subtitle: "For one your watch missed", systemImage: "square.and.pencil", tint: Theme.accent) {
+                sheet = .log
+            }
+            if vm.isDemoSource {
+                Divider().padding(.leading, 52)
+                actionRow(
+                    title: vm.isSimulatingEpisode ? "Simulating…" : "Simulate an episode",
+                    subtitle: "Demo only: test detection",
+                    systemImage: "waveform.path.ecg",
+                    tint: Theme.alert
+                ) {
                     vm.triggerDemoEpisode()
-                } label: {
-                    HStack(spacing: 7) {
-                        Image(systemName: "bolt.heart.fill")
-                        Text(vm.isSimulatingEpisode ? "Episode in progress…" : "Trigger episode")
-                            .font(Theme.rounded(15, .semibold))
-                    }
-                    .foregroundStyle(Theme.peachDeep)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 11)
-                    .background(Capsule().fill(Theme.peach.opacity(0.25)))
                 }
                 .disabled(!vm.isMonitoring || vm.isSimulatingEpisode)
-                .opacity((!vm.isMonitoring || vm.isSimulatingEpisode) ? 0.55 : 1)
             }
         }
+        .background(Theme.card)
+        .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
     }
 
-    // MARK: Controls
-
-    private var monitorButton: some View {
-        Button {
-            vm.toggleMonitoring()
-        } label: {
-            PrimaryButtonLabel(
-                title: vm.isMonitoring ? "Stop monitoring" : "Start monitoring",
-                systemImage: vm.isMonitoring ? "stop.fill" : "play.fill",
-                tint: vm.isMonitoring ? Theme.inkSecondary : Theme.blueDeep
-            )
+    private func actionRow(
+        title: String,
+        subtitle: String,
+        systemImage: String,
+        tint: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(tint)
+                    .frame(width: 24)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text(title)
+                        .font(Theme.font(17))
+                        .foregroundStyle(Theme.ink)
+                    Text(subtitle)
+                        .font(Theme.font(13))
+                        .foregroundStyle(Theme.inkSecondary)
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color(uiColor: .tertiaryLabel))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
 
     private var footnote: some View {
         Text("SVT Monitor is a personal tracking tool, not a medical device.")
-            .font(Theme.rounded(12))
+            .font(Theme.font(12))
             .foregroundStyle(Theme.inkSecondary)
-            .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity)
-            .padding(.top, 4)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 4)
     }
 }
 

@@ -44,17 +44,17 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("Alert threshold")
-                            .font(Theme.rounded(16, .semibold))
+                            .font(Theme.font(16, .semibold))
                             .foregroundStyle(Theme.ink)
                         Spacer()
-                        Text("\(Int(settings.threshold)) BPM")
-                            .font(Theme.rounded(16, .bold))
-                            .foregroundStyle(Theme.blueDeep)
+                        Text("\(Int(settings.threshold)) bpm")
+                            .font(Theme.number(17, .regular))
+                            .foregroundStyle(Theme.inkSecondary)
                     }
                     Slider(value: $settings.threshold, in: 120...200, step: 1)
-                        .tint(Theme.blue)
+                        .tint(Theme.accentSoft)
                     Text("Sustained readings at or above this rate count toward a possible episode.")
-                        .font(Theme.rounded(13))
+                        .font(Theme.font(13))
                         .foregroundStyle(Theme.inkSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -65,16 +65,16 @@ struct SettingsView: View {
                     Stepper(value: $settings.onsetDelta, in: 20...80, step: 5) {
                         HStack {
                             Text("Sudden-onset rise")
-                                .font(Theme.rounded(16, .semibold))
+                                .font(Theme.font(16, .semibold))
                                 .foregroundStyle(Theme.ink)
                             Spacer()
-                            Text("+\(Int(settings.onsetDelta)) BPM")
-                                .font(Theme.rounded(16, .bold))
-                                .foregroundStyle(Theme.blueDeep)
+                            Text("+\(Int(settings.onsetDelta)) bpm")
+                                .font(Theme.number(17, .regular))
+                                .foregroundStyle(Theme.inkSecondary)
                         }
                     }
                     Text("A jump this large within 60 seconds flags an episode early, since SVT tends to start abruptly.")
-                        .font(Theme.rounded(13))
+                        .font(Theme.font(13))
                         .foregroundStyle(Theme.inkSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -101,10 +101,10 @@ struct SettingsView: View {
                         statusDot(healthKitAuthorized)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Apple Health access")
-                                .font(Theme.rounded(15, .semibold))
+                                .font(Theme.font(15, .semibold))
                                 .foregroundStyle(Theme.ink)
                             Text(hkStatusText)
-                                .font(Theme.rounded(13))
+                                .font(Theme.font(13))
                                 .foregroundStyle(Theme.inkSecondary)
                         }
                         Spacer()
@@ -113,15 +113,15 @@ struct SettingsView: View {
                                 hkProvider.requestStatus { hkStatus = $0 }
                             }
                         }
-                        .font(Theme.rounded(14, .semibold))
-                        .foregroundStyle(Theme.blueDeep)
+                        .font(Theme.font(14, .semibold))
+                        .foregroundStyle(Theme.accent)
                     }
                     Text("Heart-rate data comes from your Apple Watch via Apple Health.")
-                        .font(Theme.rounded(13))
+                        .font(Theme.font(13))
                         .foregroundStyle(Theme.inkSecondary)
                 } else {
                     Text("Demo mode generates a lifelike heart-rate signal so you can explore the app without an Apple Watch.")
-                        .font(Theme.rounded(13))
+                        .font(Theme.font(13))
                         .foregroundStyle(Theme.inkSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -155,10 +155,10 @@ struct SettingsView: View {
                     statusDot(notifications.authorizationStatus == .authorized)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Episode alerts")
-                            .font(Theme.rounded(15, .semibold))
+                            .font(Theme.font(15, .semibold))
                             .foregroundStyle(Theme.ink)
                         Text(notificationStatusText)
-                            .font(Theme.rounded(13))
+                            .font(Theme.font(13))
                             .foregroundStyle(Theme.inkSecondary)
                     }
                     Spacer()
@@ -166,8 +166,8 @@ struct SettingsView: View {
                         Button("Enable") {
                             notifications.requestAuthorization { _ in }
                         }
-                        .font(Theme.rounded(14, .semibold))
-                        .foregroundStyle(Theme.blueDeep)
+                        .font(Theme.font(14, .semibold))
+                        .foregroundStyle(Theme.accent)
                     }
                 }
             }
@@ -190,13 +190,13 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     Image(systemName: "exclamationmark.shield.fill")
-                        .foregroundStyle(Theme.peachDeep)
+                        .foregroundStyle(Theme.alert)
                     Text("Important")
-                        .font(Theme.rounded(16, .bold))
+                        .font(Theme.font(16, .bold))
                         .foregroundStyle(Theme.ink)
                 }
                 Text("SVT Monitor is a personal tracking tool, not a medical device. It does not diagnose, treat, or prevent any condition. Always consult your care team about symptoms.")
-                    .font(Theme.rounded(14))
+                    .font(Theme.font(14))
                     .foregroundStyle(Theme.inkSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -211,21 +211,21 @@ struct SettingsView: View {
                 SectionHeader(title: "About")
                 HStack {
                     Text("Version")
-                        .font(Theme.rounded(15, .medium))
+                        .font(Theme.font(15, .medium))
                         .foregroundStyle(Theme.ink)
                     Spacer()
                     Text("1.0")
-                        .font(Theme.rounded(15, .semibold))
+                        .font(Theme.font(15, .semibold))
                         .foregroundStyle(Theme.inkSecondary)
                 }
                 Divider().background(Theme.hairline)
                 HStack {
                     Text("Built by")
-                        .font(Theme.rounded(15, .medium))
+                        .font(Theme.font(15, .medium))
                         .foregroundStyle(Theme.ink)
                     Spacer()
                     Text("Sydney Gahunia")
-                        .font(Theme.rounded(15, .semibold))
+                        .font(Theme.font(15, .semibold))
                         .foregroundStyle(Theme.inkSecondary)
                 }
             }
@@ -236,7 +236,7 @@ struct SettingsView: View {
 
     private func statusDot(_ on: Bool) -> some View {
         Circle()
-            .fill(on ? Theme.blue : Theme.hairline)
+            .fill(on ? Theme.accentSoft : Theme.hairline)
             .frame(width: 12, height: 12)
     }
 }

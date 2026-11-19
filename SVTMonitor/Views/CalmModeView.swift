@@ -49,7 +49,7 @@ struct CalmModeView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
-                        .font(Theme.rounded(17, .semibold))
+                        .font(Theme.font(17, .semibold))
                 }
             }
         }
@@ -72,47 +72,42 @@ struct CalmModeView: View {
     private var breathingGuide: some View {
         VStack(spacing: 18) {
             ZStack {
+                // The outline marks how far to breathe in; the fill is where
+                // you are now.
                 Circle()
-                    .fill(Theme.blue.opacity(0.14))
+                    .stroke(Theme.calm.opacity(0.25), lineWidth: 1.5)
                     .frame(width: 260, height: 260)
 
                 Circle()
-                    .fill(
-                        RadialGradient(
-                            colors: [Theme.blue.opacity(0.85), Theme.blueDeep.opacity(0.55)],
-                            center: .center,
-                            startRadius: 10,
-                            endRadius: 130
-                        )
-                    )
+                    .fill(Theme.calm.opacity(0.85))
                     .frame(width: 260, height: 260)
                     .scaleEffect(circleScale)
 
-                VStack(spacing: 6) {
-                    Text(currentPhase.instruction)
-                        .font(Theme.rounded(26, .bold))
+                if let state {
+                    Text("\(state.secondsRemaining)")
+                        .font(Theme.number(48, .medium))
                         .foregroundStyle(.white)
-                    if let state {
-                        Text("\(state.secondsRemaining)")
-                            .font(Theme.rounded(44, .bold))
-                            .foregroundStyle(.white)
-                            .contentTransition(.numericText())
-                    }
+                        .contentTransition(.numericText())
                 }
-                .shadow(color: Theme.ink.opacity(0.25), radius: 6, y: 2)
             }
-            .frame(height: 280)
+            .frame(height: 270)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Breathing guide")
             .accessibilityValue("\(currentPhase.instruction), \(state?.secondsRemaining ?? 0) seconds")
 
+            Text(currentPhase.instruction)
+                .font(Theme.font(28, .semibold))
+                .foregroundStyle(Theme.ink)
+                .contentTransition(.opacity)
+                .animation(.easeInOut(duration: 0.3), value: currentPhase)
+
             if let state, state.completedCycles > 0 {
                 Text("\(state.completedCycles) breath\(state.completedCycles == 1 ? "" : "s") so far")
-                    .font(Theme.rounded(15))
+                    .font(Theme.font(15))
                     .foregroundStyle(Theme.inkSecondary)
             } else {
                 Text("Follow the circle. Nothing else to do.")
-                    .font(Theme.rounded(15))
+                    .font(Theme.font(15))
                     .foregroundStyle(Theme.inkSecondary)
             }
         }
@@ -129,13 +124,13 @@ struct CalmModeView: View {
                         HStack(spacing: 12) {
                             Image(systemName: pattern.id == option.id ? "largecircle.fill.circle" : "circle")
                                 .font(.system(size: 20))
-                                .foregroundStyle(pattern.id == option.id ? Theme.blueDeep : Theme.hairline)
+                                .foregroundStyle(pattern.id == option.id ? Theme.calm : Theme.hairline)
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("\(option.name) · \(option.rhythmText)")
-                                    .font(Theme.rounded(16, .semibold))
+                                Text(option.name == option.rhythmText ? option.name : "\(option.name) · \(option.rhythmText)")
+                                    .font(Theme.font(16, .semibold))
                                     .foregroundStyle(Theme.ink)
                                 Text(option.subtitle)
-                                    .font(Theme.rounded(13))
+                                    .font(Theme.font(13))
                                     .foregroundStyle(Theme.inkSecondary)
                                     .multilineTextAlignment(.leading)
                             }
@@ -154,13 +149,13 @@ struct CalmModeView: View {
             HStack(spacing: 14) {
                 Image(systemName: "heart.fill")
                     .font(.system(size: 22))
-                    .foregroundStyle(Theme.peachDeep)
+                    .foregroundStyle(Theme.accent)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("\(bpm) BPM")
-                        .font(Theme.rounded(24, .bold))
+                    Text("\(bpm) bpm")
+                        .font(Theme.number(24))
                         .foregroundStyle(Theme.ink)
                     Text("Current rate")
-                        .font(Theme.rounded(13))
+                        .font(Theme.font(13))
                         .foregroundStyle(Theme.inkSecondary)
                 }
                 Spacer(minLength: 0)
@@ -180,10 +175,10 @@ struct CalmModeView: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 3) {
                             Text("Maneuver reminders")
-                                .font(Theme.rounded(17, .bold))
+                                .font(Theme.font(17, .bold))
                                 .foregroundStyle(Theme.ink)
                             Text("Only what your care team taught you")
-                                .font(Theme.rounded(13))
+                                .font(Theme.font(13))
                                 .foregroundStyle(Theme.inkSecondary)
                         }
                         Spacer(minLength: 0)
@@ -197,13 +192,13 @@ struct CalmModeView: View {
 
                 if showManeuvers {
                     Text(VagalManeuver.disclaimer)
-                        .font(Theme.rounded(14))
+                        .font(Theme.font(14))
                         .foregroundStyle(Theme.ink)
                         .padding(14)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(
-                            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .fill(Theme.peach.opacity(0.25))
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(Color(uiColor: .tertiarySystemFill))
                         )
 
                     ForEach(VagalManeuver.all) { maneuver in
@@ -213,9 +208,9 @@ struct CalmModeView: View {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "hand.raised.fill")
                             .font(.system(size: 14))
-                            .foregroundStyle(Theme.peachDeep)
+                            .foregroundStyle(Theme.alert)
                         Text(VagalManeuver.neverDoAlone)
-                            .font(Theme.rounded(13, .semibold))
+                            .font(Theme.font(13, .semibold))
                             .foregroundStyle(Theme.ink)
                     }
                     .padding(.top, 2)
@@ -229,23 +224,23 @@ struct CalmModeView: View {
             HStack(spacing: 9) {
                 Image(systemName: maneuver.systemImage)
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(Theme.blueDeep)
+                    .foregroundStyle(Theme.calm)
                 Text(maneuver.title)
-                    .font(Theme.rounded(16, .bold))
+                    .font(Theme.font(16, .bold))
                     .foregroundStyle(Theme.ink)
             }
 
             Text(maneuver.precondition)
-                .font(Theme.rounded(13, .semibold))
-                .foregroundStyle(Theme.peachDeep)
+                .font(Theme.font(13, .semibold))
+                .foregroundStyle(Theme.alert)
 
             ForEach(Array(maneuver.steps.enumerated()), id: \.offset) { index, step in
                 HStack(alignment: .top, spacing: 8) {
                     Text("\(index + 1).")
-                        .font(Theme.rounded(14, .semibold))
+                        .font(Theme.font(14, .semibold))
                         .foregroundStyle(Theme.inkSecondary)
                     Text(step)
-                        .font(Theme.rounded(14))
+                        .font(Theme.font(14))
                         .foregroundStyle(Theme.ink)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -254,7 +249,7 @@ struct CalmModeView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(Theme.background)
         )
     }
@@ -264,27 +259,27 @@ struct CalmModeView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     Image(systemName: "cross.case.fill")
-                        .foregroundStyle(Theme.peachDeep)
+                        .foregroundStyle(Theme.alert)
                     Text("Get help now if you have")
-                        .font(Theme.rounded(17, .bold))
+                        .font(Theme.font(17, .bold))
                         .foregroundStyle(Theme.ink)
                 }
 
                 ForEach(VagalManeuver.seekHelpPoints, id: \.self) { point in
                     HStack(alignment: .top, spacing: 8) {
                         Circle()
-                            .fill(Theme.peachDeep)
+                            .fill(Theme.alert)
                             .frame(width: 5, height: 5)
                             .padding(.top, 7)
                         Text(point)
-                            .font(Theme.rounded(15))
+                            .font(Theme.font(15))
                             .foregroundStyle(Theme.ink)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
 
                 Text(VagalManeuver.seekHelpFooter)
-                    .font(Theme.rounded(14, .semibold))
+                    .font(Theme.font(14, .semibold))
                     .foregroundStyle(Theme.ink)
                     .padding(.top, 4)
             }

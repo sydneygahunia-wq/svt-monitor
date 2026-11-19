@@ -1,45 +1,97 @@
 import SwiftUI
+import UIKit
 
-/// Central place for Sydney's brand palette, typography and spacing.
-/// Colors are also mirrored in Assets.xcassets so the launch screen and
-/// app icon stay in sync, but SwiftUI reads them from here for convenience.
+/// Palette, type and surfaces.
+///
+/// The look follows Apple Health and the Watch Heart Rate app rather than a
+/// custom "brand" skin: system grouped backgrounds, flat surfaces, SF Pro for
+/// words and SF Rounded only for the numbers people actually read. Every color
+/// has a dark-mode value, because episodes often happen at night.
 enum Theme {
 
     // MARK: - Palette
-    /// #eef2f7 — calm off-white app background.
-    static let background = Color(red: 0xEE / 255, green: 0xF2 / 255, blue: 0xF7 / 255)
-    /// #2b3240 — slate ink for primary text.
-    static let ink = Color(red: 0x2B / 255, green: 0x32 / 255, blue: 0x40 / 255)
-    /// Muted slate for secondary text.
-    static let inkSecondary = Color(red: 0x5A / 255, green: 0x63 / 255, blue: 0x75 / 255)
-    /// #79aede — pastel blue, the primary brand accent.
-    static let blue = Color(red: 0x79 / 255, green: 0xAE / 255, blue: 0xDE / 255)
-    /// A slightly deeper blue for text/lines on light surfaces.
-    static let blueDeep = Color(red: 0x4E / 255, green: 0x86 / 255, blue: 0xBE / 255)
-    /// #eeb29c — soft peach, used only for episode / alert emphasis.
-    static let peach = Color(red: 0xEE / 255, green: 0xB2 / 255, blue: 0x9C / 255)
-    /// A deeper peach for peach text that needs contrast.
-    static let peachDeep = Color(red: 0xC9 / 255, green: 0x77 / 255, blue: 0x5A / 255)
-    /// Card / surface color that sits above the background.
-    static let card = Color.white
-    /// Hairline separators.
-    static let hairline = Color(red: 0xD9 / 255, green: 0xDF / 255, blue: 0xE8 / 255)
+
+    /// Heart-rate data and primary actions. A rose red, the color people
+    /// already associate with heart data on iOS.
+    static let accent = dynamic(light: 0xC8364A, dark: 0xFF6B7A)
+    /// Lighter accent for fills, area charts and the resting heart.
+    static let accentSoft = dynamic(light: 0xE5677A, dark: 0xFF8F9A)
+    /// Possible episode / over-threshold. Amber so it reads as "pay attention"
+    /// and stays distinct from ordinary heart-rate red.
+    static let alert = dynamic(light: 0xB85000, dark: 0xFF9F43)
+    /// Lighter alert for fills and threshold lines.
+    static let alertSoft = dynamic(light: 0xF08C3A, dark: 0xFFB46B)
+    /// Breathing guide only. A cool teal, as in Apple's Breathe, so calm mode
+    /// doesn't put a red-and-amber screen in front of someone mid-episode.
+    static let calm = dynamic(light: 0x1E8A8A, dark: 0x5CD1CC)
+
+    static let background = Color(uiColor: .systemGroupedBackground)
+    static let card = Color(uiColor: .secondarySystemGroupedBackground)
+    static let ink = Color(uiColor: .label)
+    static let inkSecondary = Color(uiColor: .secondaryLabel)
+    static let hairline = Color(uiColor: .separator)
 
     // MARK: - Metrics
-    static let cornerRadius: CGFloat = 22
-    static let cardShadow = Color(red: 0x2B / 255, green: 0x32 / 255, blue: 0x40 / 255).opacity(0.08)
 
-    // MARK: - Typography (SF Rounded)
-    static func rounded(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .rounded)
+    /// Matches inset-grouped list cells, so cards and lists sit together.
+    static let cornerRadius: CGFloat = 12
+
+    // MARK: - Typography
+
+    /// SF Pro at a base size that grows with the user's Dynamic Type setting.
+    static func font(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
+        scaled(.systemFont(ofSize: size, weight: uiWeight(weight)))
+    }
+
+    /// SF Rounded with fixed-width digits, for heart rates, durations and
+    /// counts, so values don't jitter as they update.
+    static func number(_ size: CGFloat, _ weight: Font.Weight = .semibold) -> Font {
+        let base = UIFont.systemFont(ofSize: size, weight: uiWeight(weight))
+        let rounded = base.fontDescriptor.withDesign(.rounded).map { UIFont(descriptor: $0, size: size) } ?? base
+        return scaled(rounded).monospacedDigit()
+    }
+
+    // MARK: - Helpers
+
+    private static func scaled(_ font: UIFont) -> Font {
+        Font(UIFontMetrics.default.scaledFont(for: font))
+    }
+
+    private static func uiWeight(_ weight: Font.Weight) -> UIFont.Weight {
+        switch weight {
+        case .ultraLight: return .ultraLight
+        case .thin: return .thin
+        case .light: return .light
+        case .medium: return .medium
+        case .semibold: return .semibold
+        case .bold: return .bold
+        case .heavy: return .heavy
+        case .black: return .black
+        default: return .regular
+        }
+    }
+
+    private static func dynamic(light: UInt32, dark: UInt32) -> Color {
+        Color(uiColor: UIColor { traits in
+            traits.userInterfaceStyle == .dark ? uiColor(dark) : uiColor(light)
+        })
+    }
+
+    private static func uiColor(_ hex: UInt32) -> UIColor {
+        UIColor(
+            red: CGFloat((hex >> 16) & 0xFF) / 255,
+            green: CGFloat((hex >> 8) & 0xFF) / 255,
+            blue: CGFloat(hex & 0xFF) / 255,
+            alpha: 1
+        )
     }
 }
 
 // MARK: - Reusable surface styling
 
-/// A soft rounded card used throughout the app for a calm, patient-friendly look.
+/// A flat grouped surface, the same shape as an inset-grouped list cell.
 struct Card<Content: View>: View {
-    var padding: CGFloat = 20
+    var padding: CGFloat = 16
     @ViewBuilder var content: Content
 
     var body: some View {
@@ -48,7 +100,6 @@ struct Card<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Theme.card)
             .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
-            .shadow(color: Theme.cardShadow, radius: 14, x: 0, y: 6)
     }
 }
 

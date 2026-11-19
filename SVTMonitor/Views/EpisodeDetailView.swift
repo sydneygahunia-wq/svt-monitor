@@ -37,13 +37,13 @@ struct EpisodeDetailView: View {
                 HStack(spacing: 10) {
                     Image(systemName: "waveform.path.ecg.rectangle.fill")
                         .font(.system(size: 22))
-                        .foregroundStyle(Theme.peachDeep)
+                        .foregroundStyle(Theme.alert)
                     VStack(alignment: .leading, spacing: 2) {
                         Text(episode.startDate.formatted(date: .complete, time: .omitted))
-                            .font(Theme.rounded(15, .semibold))
+                            .font(Theme.font(15, .semibold))
                             .foregroundStyle(Theme.ink)
                         Text("Started \(episode.startDate.formatted(date: .omitted, time: .shortened))")
-                            .font(Theme.rounded(13))
+                            .font(Theme.font(13))
                             .foregroundStyle(Theme.inkSecondary)
                     }
                 }
@@ -51,21 +51,21 @@ struct EpisodeDetailView: View {
                 Divider().background(Theme.hairline)
 
                 HStack(spacing: 12) {
-                    MetricView(value: episode.durationText, label: "Duration", tint: Theme.ink, alignment: .center)
-                    MetricView(value: "\(Int(episode.peakBPM.rounded()))", label: "Peak BPM", tint: Theme.peachDeep, alignment: .center)
-                    MetricView(value: "\(Int(episode.avgBPM.rounded()))", label: "Avg BPM", tint: Theme.blueDeep, alignment: .center)
+                    MetricView(value: episode.durationText, label: "Duration")
+                    MetricView(value: "\(Int(episode.peakBPM.rounded())) bpm", label: "Peak")
+                    MetricView(value: "\(Int(episode.avgBPM.rounded())) bpm", label: "Average")
                 }
 
                 if episode.isManualEntry || episode.usedCalmMode || episode.severityText != nil {
                     FlowLayout(spacing: 6, lineSpacing: 6) {
                         if let severity = episode.severityText {
-                            TagChip(title: severity, systemImage: "gauge.medium", tint: Theme.peachDeep)
+                            TagChip(title: severity, systemImage: "gauge.medium", tint: Theme.alert)
                         }
                         if episode.isManualEntry {
                             TagChip(title: "Logged by hand", systemImage: "square.and.pencil", tint: Theme.inkSecondary)
                         }
                         if episode.usedCalmMode {
-                            TagChip(title: "Used calm mode", systemImage: "wind", tint: Theme.blueDeep)
+                            TagChip(title: "Used calm mode", systemImage: "wind", tint: Theme.calm)
                         }
                     }
                 }
@@ -83,13 +83,13 @@ struct EpisodeDetailView: View {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 20))
-                    .foregroundStyle(Theme.peachDeep)
+                    .foregroundStyle(Theme.alert)
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Worth telling your care team")
-                        .font(Theme.rounded(16, .bold))
+                        .font(Theme.font(16, .bold))
                         .foregroundStyle(Theme.ink)
                     Text("You tagged chest pain or nearly fainting during this episode. Those are worth raising with your cardiologist, and worth calling emergency services for if they happen again.")
-                        .font(Theme.rounded(14))
+                        .font(Theme.font(14))
                         .foregroundStyle(Theme.inkSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -136,7 +136,7 @@ struct EpisodeDetailView: View {
                 SymptomPicker(selection: symptomSelection)
                 if episode.symptoms.isEmpty {
                     Text("Tagging symptoms takes a second now and saves you trying to remember at your next appointment.")
-                        .font(Theme.rounded(13))
+                        .font(Theme.font(13))
                         .foregroundStyle(Theme.inkSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -150,7 +150,7 @@ struct EpisodeDetailView: View {
                 SectionHeader(title: "Possible triggers")
                 TriggerPicker(selection: triggerSelection)
                 Text("One episode after coffee means nothing. A pattern across many is worth showing someone.")
-                    .font(Theme.rounded(13))
+                    .font(Theme.font(13))
                     .foregroundStyle(Theme.inkSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -181,11 +181,11 @@ struct EpisodeDetailView: View {
     private var traceCard: some View {
         Card {
             VStack(alignment: .leading, spacing: 12) {
-                SectionHeader(title: "Heart rate during episode")
+                SectionHeader(title: "Heart rate")
 
                 if episode.hrTrace.isEmpty {
                     Text("No trace was recorded for this episode.")
-                        .font(Theme.rounded(14))
+                        .font(Theme.font(14))
                         .foregroundStyle(Theme.inkSecondary)
                         .frame(height: 180)
                         .frame(maxWidth: .infinity)
@@ -196,7 +196,7 @@ struct EpisodeDetailView: View {
                         Spacer()
                         Text((episode.endDate ?? Date()).formatted(date: .omitted, time: .shortened))
                     }
-                    .font(Theme.rounded(11, .medium))
+                    .font(Theme.font(11, .medium))
                     .foregroundStyle(Theme.inkSecondary)
                 }
             }
@@ -210,39 +210,29 @@ struct EpisodeDetailView: View {
                     x: .value("Sample", point.index),
                     y: .value("BPM", point.bpm)
                 )
-                .interpolationMethod(.catmullRom)
-                .foregroundStyle(Theme.peachDeep)
-                .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-
-                AreaMark(
-                    x: .value("Sample", point.index),
-                    y: .value("BPM", point.bpm)
-                )
-                .interpolationMethod(.catmullRom)
-                .foregroundStyle(
-                    LinearGradient(colors: [Theme.peach.opacity(0.4), .clear],
-                                   startPoint: .top, endPoint: .bottom)
-                )
+                .interpolationMethod(.monotone)
+                .foregroundStyle(Theme.accent)
+                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
             }
 
-            RuleMark(y: .value("Threshold", settings.threshold))
-                .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                .foregroundStyle(Theme.blueDeep.opacity(0.8))
+            RuleMark(y: .value("Alert", settings.threshold))
+                .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                .foregroundStyle(Theme.alertSoft)
                 .annotation(position: .top, alignment: .leading) {
-                    Text("Threshold \(Int(settings.threshold))")
-                        .font(Theme.rounded(10, .semibold))
-                        .foregroundStyle(Theme.blueDeep)
+                    Text("Alert at \(Int(settings.threshold))")
+                        .font(Theme.font(11))
+                        .foregroundStyle(Theme.inkSecondary)
                 }
         }
         .chartYScale(domain: yDomain)
         .chartXAxis(.hidden)
         .chartYAxis {
-            AxisMarks(position: .leading, values: .automatic(desiredCount: 4)) { value in
+            AxisMarks(position: .trailing, values: .automatic(desiredCount: 4)) { value in
                 AxisGridLine().foregroundStyle(Theme.hairline)
                 AxisValueLabel {
                     if let v = value.as(Double.self) {
                         Text("\(Int(v))")
-                            .font(Theme.rounded(10))
+                            .font(Theme.number(11, .regular))
                             .foregroundStyle(Theme.inkSecondary)
                     }
                 }
@@ -269,7 +259,7 @@ struct EpisodeDetailView: View {
                     text: $episode.notes,
                     axis: .vertical
                 )
-                .font(Theme.rounded(15))
+                .font(Theme.font(15))
                 .foregroundStyle(Theme.ink)
                 .lineLimit(3...8)
                 .textFieldStyle(.plain)

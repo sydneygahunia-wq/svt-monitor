@@ -30,7 +30,7 @@ struct SVTMonitorApp: App {
             RootView()
                 .environmentObject(settings)
                 .environmentObject(monitor)
-                .tint(Theme.blueDeep)
+                .tint(Theme.accent)
         }
         .modelContainer(container)
     }
