@@ -189,6 +189,12 @@ struct EpisodeDetailView: View {
         Card {
             VStack(alignment: .leading, spacing: 12) {
                 SectionHeader(title: "Heart rate")
+                // Kept out of the plot so it never sits on top of the line.
+                if !episode.hrTrace.isEmpty {
+                    Text("Dashed line: your \(Int(settings.threshold)) bpm alert")
+                        .font(Theme.font(13))
+                        .foregroundStyle(Theme.inkSecondary)
+                }
 
                 if episode.hrTrace.isEmpty {
                     Text("No trace was recorded for this episode.")
@@ -225,11 +231,6 @@ struct EpisodeDetailView: View {
             RuleMark(y: .value("Alert", settings.threshold))
                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                 .foregroundStyle(Theme.alertSoft)
-                .annotation(position: .top, alignment: .leading) {
-                    Text("Alert at \(Int(settings.threshold))")
-                        .font(Theme.font(11))
-                        .foregroundStyle(Theme.inkSecondary)
-                }
         }
         .chartYScale(domain: yDomain)
         .chartXAxis(.hidden)

@@ -6,6 +6,11 @@ can take to your cardiologist.
 
 **Swift · SwiftUI · HealthKit · SwiftData · Swift Charts · iOS 17**
 
+<p align="center">
+  <img src="docs/demo.gif" width="300" alt="Demo: a simulated episode pushes heart rate past the 150 bpm alert, Calm Mode opens on its own with a breathing guide, and when the rate drops the episode is saved to the log with its duration, peak and average.">
+</p>
+<p align="center"><sub>A simulated episode, sped up: detection, Calm Mode, then the saved record.</sub></p>
+
 | Live Monitor | Episode Log | Calm Mode |
 |:---:|:---:|:---:|
 | ![Live heart rate with the last 90 seconds charted against the alert line](docs/dashboard.png) | ![Episode history grouped by month with time, duration and peak heart rate](docs/episodes.png) | ![Guided breathing circle with pace options and live heart rate](docs/calm.png) |

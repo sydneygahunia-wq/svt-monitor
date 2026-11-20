@@ -101,7 +101,7 @@ struct EpisodeListView: View {
     /// One plain sentence instead of stat tiles.
     private var summaryHeader: some View {
         let count = episodes.count
-        let peak = Int(episodes.map(\.peakBPM).max() ?? 0)
+        let peak = Int((episodes.map(\.peakBPM).max() ?? 0).rounded())
         return Text("\(count) episode\(count == 1 ? "" : "s") recorded\(peak > 0 ? ", highest \(peak) bpm" : "")")
             .font(Theme.font(15))
             .foregroundStyle(Theme.inkSecondary)
