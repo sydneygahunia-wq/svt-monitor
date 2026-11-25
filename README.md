@@ -7,9 +7,9 @@ can take to your cardiologist.
 **Swift · SwiftUI · HealthKit · SwiftData · Swift Charts · iOS 17**
 
 <p align="center">
-  <img src="docs/demo.gif" width="300" alt="Demo: a simulated episode pushes heart rate past the 150 bpm alert, Calm Mode opens on its own with a breathing guide, and when the rate drops the episode is saved to the log with its duration, peak and average.">
+  <img src="docs/demo.gif" width="320" alt="Five captioned steps: resting heart rate around 72 bpm; a sudden jump to about 180 bpm opens Calm Mode with a breathing guide; the dashboard shows the episode being recorded; the rate drops back and the episode is saved; the log shows it with its duration and peak.">
 </p>
-<p align="center"><sub>A simulated episode, sped up: detection, Calm Mode, then the saved record.</sub></p>
+<p align="center"><sub>Recorded in the iOS simulator with demo data, shortened to about 40 seconds.</sub></p>
 
 | Live Monitor | Episode Log | Calm Mode |
 |:---:|:---:|:---:|
@@ -32,8 +32,9 @@ happens and helps in the moment, when it's hardest to think clearly.
 - **Episode log and trends:** symptoms, possible triggers and severity for each
   episode, with charts showing how often they happen and how high they peak.
 - **Appointment summary:** export your history to share with your doctor.
-- **Demo mode:** simulated heart-rate data, so you can try everything without a
-  watch, including in the simulator.
+- **Demo mode:** simulated heart rate that behaves like SVT (a sudden jump, a
+  steady 160 to 200 bpm, then a sudden drop), so you can try everything without
+  a watch, including in the simulator.
 
 ## Engineering highlights
 

@@ -17,10 +17,20 @@ private struct SeededGenerator: RandomNumberGenerator {
 /// Generates a lifelike heart-rate stream for demo mode (and the simulator,
 /// where no Apple Watch data exists).
 ///
-/// Baseline is a gentle sinus rhythm around ~72 BPM with slow drift and light
-/// noise. `triggerEpisode()` produces a textbook SVT shape: an abrupt ramp to
-/// 165–195 BPM over ~10s, a sustained plateau with jitter for 30–90s, then a
-/// sudden drop back to baseline.
+/// Baseline is a resting sinus rhythm around ~72 bpm with slow drift and
+/// light noise. `triggerEpisode()` follows how SVT actually behaves, which is
+/// what separates it from exercise or anxiety:
+///
+/// - **Sudden start.** The rate jumps within a few seconds rather than
+///   climbing, so the first reading is already partway there and the next
+///   is at the episode rate.
+/// - **Fast and very regular.** It holds 160–200 bpm with only a couple of
+///   bpm of wobble, unlike the noisier rise of sinus tachycardia.
+/// - **Sudden stop.** The rate falls back in one step to a slightly raised
+///   sinus rate, then settles toward resting over about half a minute.
+///
+/// Real episodes last minutes to hours; this one is shortened to 40–70 s so
+/// the demo is watchable.
 final class SimulatedHeartRateProvider: HeartRateProvider {
 
     let source: HeartRateSample.Source = .simulated
@@ -31,11 +41,10 @@ final class SimulatedHeartRateProvider: HeartRateProvider {
     /// Emitted so the UI can reflect that an episode is being simulated.
     private(set) var isSimulatingEpisode = false
 
-    // Tunables (seconds).
+    /// Seconds between readings.
     private let tickInterval: TimeInterval = 2.0
-    private let rampDurationTicks = 5          // ~10s
 
-    private enum Phase { case baseline, ramping, sustained, dropping }
+    private enum Phase { case baseline, onset, sustained }
     private var phase: Phase = .baseline
 
     private var timer: Timer?
@@ -43,10 +52,10 @@ final class SimulatedHeartRateProvider: HeartRateProvider {
 
     private var drift: Double = 0
     private var lastBPM: Double = 72
-    private var rampStartBPM: Double = 72
     private var target: Double = 180
-    private var rampProgressTicks = 0
     private var sustainTicksRemaining = 0
+    /// Extra bpm on top of baseline right after an episode ends; decays to 0.
+    private var recoveryBoost: Double = 0
 
     // MARK: HeartRateProvider
 
@@ -70,14 +79,12 @@ final class SimulatedHeartRateProvider: HeartRateProvider {
 
     // MARK: Demo control
 
-    /// Kick off a simulated SVT episode. Ignored if one is already ramping or
-    /// sustained.
+    /// Start a simulated SVT episode. Ignored if one is already running.
     func triggerEpisode() {
         guard phase == .baseline else { return }
-        rampStartBPM = lastBPM
-        target = Double.random(in: 165...195, using: &rng)
-        rampProgressTicks = 0
-        phase = .ramping
+        target = Double.random(in: 165...195, using: &rng).rounded()
+        sustainTicksRemaining = Int.random(in: 20...35, using: &rng) // 40–70 s
+        phase = .onset
         isSimulatingEpisode = true
     }
 
@@ -88,37 +95,33 @@ final class SimulatedHeartRateProvider: HeartRateProvider {
         switch phase {
         case .baseline:
             bpm = currentBaseline()
-        case .ramping:
-            rampProgressTicks += 1
-            let t = min(1.0, Double(rampProgressTicks) / Double(rampDurationTicks))
-            // Ease-in for an accelerating, sudden-feeling onset.
-            let eased = t * t
-            let jitter = Double.random(in: -4...4, using: &rng)
-            bpm = rampStartBPM + (target - rampStartBPM) * eased + jitter
-            if rampProgressTicks >= rampDurationTicks {
-                phase = .sustained
-                sustainTicksRemaining = Int.random(in: 15...45, using: &rng) // 30–90s
-            }
+        case .onset:
+            // The watch averages over a few seconds, so the reading taken
+            // across the jump lands partway between the two rates.
+            bpm = lastBPM + (target - lastBPM) * 0.65
+            phase = .sustained
         case .sustained:
-            let jitter = Double.random(in: -9...9, using: &rng)
-            bpm = target + jitter
+            bpm = target + Double.random(in: -2...2, using: &rng)
             sustainTicksRemaining -= 1
-            if sustainTicksRemaining <= 0 { phase = .dropping }
-        case .dropping:
-            // Abrupt return to baseline, characteristic of SVT termination.
-            phase = .baseline
-            isSimulatingEpisode = false
-            bpm = currentBaseline()
+            if sustainTicksRemaining <= 0 {
+                phase = .baseline
+                isSimulatingEpisode = false
+                recoveryBoost = 22
+            }
         }
         emit(bpm: bpm)
     }
 
-    /// Slow-drifting sinus baseline with light beat-to-beat noise.
+    /// Slow-drifting sinus baseline with light noise, plus any post-episode
+    /// boost that fades over roughly 30 s.
     private func currentBaseline() -> Double {
         drift += Double.random(in: -0.8...0.8, using: &rng)
         drift = min(8, max(-8, drift))
         let noise = Double.random(in: -2.5...2.5, using: &rng)
-        return (72 + drift + noise).clamped(to: 55...92)
+        let value = (72 + drift + noise).clamped(to: 55...92) + recoveryBoost
+        recoveryBoost *= 0.87
+        if recoveryBoost < 0.5 { recoveryBoost = 0 }
+        return value
     }
 
     private func emit(bpm: Double) {
